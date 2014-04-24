@@ -290,7 +290,7 @@ Suites.push({
 Suites.push({
     name: 'Mercury',
     url: 'todomvc/mercury/index.html',
-    version: '3.1.6',
+    version: '3.1.7',
     prepare: function (runner, contentWindow, contentDocument) {
         return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
