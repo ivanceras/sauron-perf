@@ -10,6 +10,7 @@ var mercury = require("../../index.js")
 var TimeTravel = require("../../time-travel.js")
 var document = require("global/document")
 var window = require("global/window")
+var rafListen = require("./lib/raf-listen.js")
 var localStorage = window.localStorage
 
 var Input = require("./input.js")
@@ -33,7 +34,7 @@ function createApp() {
 
     wireUpEvents(state, events)
 
-    state(function (value) {
+    rafListen(state, function (value) {
         localStorage.setItem("todos-mercury", JSON.stringify(value))
     })
 
@@ -53,7 +54,7 @@ function wireUpEvents(state, events) {
     events.setRoute(Update.setRoute.bind(null, state))
 }
 
-},{"../../index.js":7,"../../time-travel.js":91,"./input.js":2,"./render.js":4,"./state.js":5,"./update.js":6,"global/document":32,"global/window":33}],2:[function(require,module,exports){
+},{"../../index.js":8,"../../time-travel.js":92,"./input.js":2,"./lib/raf-listen.js":4,"./render.js":5,"./state.js":6,"./update.js":7,"global/document":33,"global/window":34}],2:[function(require,module,exports){
 var window = require("global/window")
 var HashRouter = require("hash-router")
 var Event = require("geval")
@@ -82,7 +83,7 @@ function EventRouter() {
     })
 }
 
-},{"../../index.js":7,"geval":31,"global/window":33,"hash-router":34}],3:[function(require,module,exports){
+},{"../../index.js":8,"geval":32,"global/window":34,"hash-router":35}],3:[function(require,module,exports){
 var document = require("global/document")
 
 module.exports = MutableFocusHook
@@ -99,7 +100,40 @@ MutableFocusHook.prototype.hook = function (node, property) {
     }
 }
 
-},{"global/document":32}],4:[function(require,module,exports){
+},{"global/document":33}],4:[function(require,module,exports){
+var raf = require('raf/polyfill');
+
+module.exports = rafListen;
+
+function rafListen(observ, fn) {
+    var sending = false;
+    var currValue;
+
+    return observ(onvalue);
+
+    function onvalue(value) {
+        currValue = value;
+        if (sending) {
+            return;
+        }
+
+        sending = true;
+        raf(send);
+    }
+
+    function send() {
+        var oldValue = currValue;
+        fn(currValue);
+        sending = false;
+
+        if (oldValue !== currValue) {
+            sending = true;
+            raf(send);
+        }
+    }
+}
+
+},{"raf/polyfill":47}],5:[function(require,module,exports){
 var mercury = require("../../index.js")
 var h = require("../../index.js").h
 
@@ -118,7 +152,7 @@ function render(state) {
         }),
         h("section#todoapp.todoapp", [
             mercury.partial(header, state.todoField, state.events),
-            mercury.partial(mainSection, state.todos, state.route, state.events),
+            mainSection(state.todos, state.route, state.events),
             mercury.partial(statsSection, state.todos, state.route, state.events)
         ]),
         footer
@@ -161,7 +195,7 @@ function mainSection(todos, route, events) {
         }),
         h("label", { htmlFor: "toggle-all" }, "Mark all as complete"),
         h("ul#todo-list.todolist", visibleTodos.map(function (todo) {
-            return mercury.partial(todoItem, todo, events)
+            return todoItem(todo, events)
         }))
     ])
 }
@@ -245,7 +279,7 @@ function infoFooter() {
     ])
 }
 
-},{"../../index.js":7,"./lib/do-mutable-focus.js":3}],5:[function(require,module,exports){
+},{"../../index.js":8,"./lib/do-mutable-focus.js":3}],6:[function(require,module,exports){
 var cuid = require("cuid")
 var extend = require("xtend")
 var mercury = require("../../index.js")
@@ -290,7 +324,7 @@ function todoItem(item) {
     })
 }
 
-},{"../../index.js":7,"cuid":15,"xtend":90}],6:[function(require,module,exports){
+},{"../../index.js":8,"cuid":16,"xtend":91}],7:[function(require,module,exports){
 var State = require("./state.js")
 
 module.exports = {
@@ -391,7 +425,7 @@ function findIndex(list, id) {
     return null
 }
 
-},{"./state.js":5}],7:[function(require,module,exports){
+},{"./state.js":6}],8:[function(require,module,exports){
 /*
     Pro tip: Don't require `mercury` itself.
       require and depend on all these modules directly!
@@ -433,9 +467,9 @@ function app(elem, observ, render) {
     elem.appendChild(loop.target)
 }
 
-},{"dom-delegator":18,"geval/multiple":29,"main-loop":39,"observ":46,"observ-array":43,"observ-hash":45,"value-event/change":47,"value-event/event":48,"value-event/key":49,"value-event/submit":55,"value-event/value":56,"vdom-thunk":57,"virtual-dom/create-element":58,"virtual-dom/diff":59,"virtual-dom/patch":62,"virtual-hyperscript":81,"virtual-hyperscript/svg":89}],8:[function(require,module,exports){
+},{"dom-delegator":19,"geval/multiple":30,"main-loop":40,"observ":46,"observ-array":43,"observ-hash":45,"value-event/change":48,"value-event/event":49,"value-event/key":50,"value-event/submit":56,"value-event/value":57,"vdom-thunk":58,"virtual-dom/create-element":59,"virtual-dom/diff":60,"virtual-dom/patch":63,"virtual-hyperscript":82,"virtual-hyperscript/svg":90}],9:[function(require,module,exports){
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -737,7 +771,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/punycode v1.2.4 by @mathias */
 ;(function(root) {
@@ -1248,7 +1282,7 @@ function isUndefined(arg) {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1334,7 +1368,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1421,13 +1455,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":11,"./encode":12}],14:[function(require,module,exports){
+},{"./decode":12,"./encode":13}],15:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2136,7 +2170,7 @@ function isNullOrUndefined(arg) {
   return  arg == null;
 }
 
-},{"punycode":10,"querystring":13}],15:[function(require,module,exports){
+},{"punycode":11,"querystring":14}],16:[function(require,module,exports){
 /**
  * cuid.js
  * Collision-resistant UID generator for browsers and node.
@@ -2248,7 +2282,7 @@ function isNullOrUndefined(arg) {
 
 }(this.applitude || this));
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var DataSet = require("data-set")
 
 module.exports = addEvent
@@ -2268,7 +2302,7 @@ function addEvent(target, type, handler) {
     }
 }
 
-},{"data-set":20}],17:[function(require,module,exports){
+},{"data-set":21}],18:[function(require,module,exports){
 var document = require("global/document")
 var DataSet = require("data-set")
 
@@ -2399,7 +2433,7 @@ function Listener(target, handlers) {
     this.handlers = handlers
 }
 
-},{"./add-event.js":16,"./proxy-event.js":26,"./remove-event.js":27,"data-set":20,"global/document":32}],18:[function(require,module,exports){
+},{"./add-event.js":17,"./proxy-event.js":27,"./remove-event.js":28,"data-set":21,"global/document":33}],19:[function(require,module,exports){
 var Individual = require("individual")
 
 var DOMDelegator = require("./dom-delegator.js")
@@ -2443,7 +2477,7 @@ function Delegator(opts) {
 
 
 
-},{"./dom-delegator.js":17,"individual":23}],19:[function(require,module,exports){
+},{"./dom-delegator.js":18,"individual":24}],20:[function(require,module,exports){
 module.exports = createHash
 
 function createHash(elem) {
@@ -2467,7 +2501,7 @@ function createHash(elem) {
     return hash
 }
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var createStore = require("weakmap-shim/create-store")
 var Individual = require("individual")
 
@@ -2487,7 +2521,7 @@ function DataSet(elem) {
     return store.hash
 }
 
-},{"./create-hash.js":19,"individual":23,"weakmap-shim/create-store":21}],21:[function(require,module,exports){
+},{"./create-hash.js":20,"individual":24,"weakmap-shim/create-store":22}],22:[function(require,module,exports){
 var hiddenStore = require('./hidden-store.js');
 
 module.exports = createStore;
@@ -2506,7 +2540,7 @@ function createStore() {
     };
 }
 
-},{"./hidden-store.js":22}],22:[function(require,module,exports){
+},{"./hidden-store.js":23}],23:[function(require,module,exports){
 module.exports = hiddenStore;
 
 function hiddenStore(obj, key) {
@@ -2524,7 +2558,7 @@ function hiddenStore(obj, key) {
     return store;
 }
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var root = require("global")
 
 module.exports = Individual
@@ -2542,7 +2576,7 @@ function Individual(key, value) {
     return value
 }
 
-},{"global":24}],24:[function(require,module,exports){
+},{"global":25}],25:[function(require,module,exports){
 (function (global){
 /*global window, global*/
 if (typeof global !== "undefined") {
@@ -2552,7 +2586,7 @@ if (typeof global !== "undefined") {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2577,7 +2611,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var inherits = require("inherits")
 
 var ALL_PROPS = [
@@ -2592,7 +2626,7 @@ var MOUSE_PROPS = [
     "screenX", "screenY", "toElement"
 ]
 
-var rkeyEvent = /^key/
+var rkeyEvent = /^key|input/
 var rmouseEvent = /^(?:mouse|pointer|contextmenu)|click/
 
 module.exports = ProxyEvent
@@ -2655,7 +2689,7 @@ function KeyEvent(ev, listener) {
 
 inherits(KeyEvent, ProxyEvent)
 
-},{"inherits":25}],27:[function(require,module,exports){
+},{"inherits":26}],28:[function(require,module,exports){
 var DataSet = require("data-set")
 
 module.exports = removeEvent
@@ -2676,7 +2710,7 @@ function removeEvent(target, type, handler) {
     }
 }
 
-},{"data-set":20}],28:[function(require,module,exports){
+},{"data-set":21}],29:[function(require,module,exports){
 module.exports = Event
 
 function Event() {
@@ -2704,7 +2738,7 @@ function Event() {
     }
 }
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var event = require("./single.js")
 
 module.exports = multiple
@@ -2716,7 +2750,7 @@ function multiple(names) {
     }, {})
 }
 
-},{"./single.js":30}],30:[function(require,module,exports){
+},{"./single.js":31}],31:[function(require,module,exports){
 var Event = require('./event.js')
 
 module.exports = Single
@@ -2733,7 +2767,7 @@ function Single() {
     }
 }
 
-},{"./event.js":28}],31:[function(require,module,exports){
+},{"./event.js":29}],32:[function(require,module,exports){
 var Event = require('./event.js')
 
 module.exports = Source
@@ -2746,14 +2780,14 @@ function Source(broadcaster) {
     return tuple.listen
 }
 
-},{"./event.js":28}],32:[function(require,module,exports){
+},{"./event.js":29}],33:[function(require,module,exports){
 if (typeof document !== "undefined") {
     module.exports = document;
 } else {
     module.exports = require("min-document");
 }
 
-},{"min-document":8}],33:[function(require,module,exports){
+},{"min-document":9}],34:[function(require,module,exports){
 (function (global){
 if (typeof window !== "undefined") {
     module.exports = window;
@@ -2764,7 +2798,7 @@ if (typeof window !== "undefined") {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 var Router = require("routes")
 var url = require("url")
 var location = require("global/document").location
@@ -2830,14 +2864,14 @@ function defaultGetRoute() {
     return location.hash || "#/"
 }
 
-},{"events":9,"global/document":35,"routes":36,"url":14,"xtend/mutable":38}],35:[function(require,module,exports){
+},{"events":10,"global/document":36,"routes":37,"url":15,"xtend/mutable":39}],36:[function(require,module,exports){
 if (typeof document !== "undefined") {
     module.exports = document
 } else {
     module.exports = require("min-document")
 }
 
-},{"min-document":8}],36:[function(require,module,exports){
+},{"min-document":9}],37:[function(require,module,exports){
 
 var localRoutes = [];
 
@@ -2987,7 +3021,7 @@ Router.Router = Router
 
 module.exports = Router
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 module.exports = hasKeys
 
 function hasKeys(source) {
@@ -2996,7 +3030,7 @@ function hasKeys(source) {
         typeof source === "function")
 }
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 var hasKeys = require("./has-keys")
 
 module.exports = extend
@@ -3017,7 +3051,7 @@ function extend(target) {
     return target
 }
 
-},{"./has-keys":37}],39:[function(require,module,exports){
+},{"./has-keys":38}],40:[function(require,module,exports){
 var raf = require("raf/polyfill")
 var vdomCreate = require("virtual-dom/create-element")
 var vdomDiff = require("virtual-dom/diff")
@@ -3077,25 +3111,7 @@ function main(initialState, view, opts) {
     }
 }
 
-},{"raf/polyfill":40,"virtual-dom/create-element":58,"virtual-dom/diff":59,"virtual-dom/patch":62}],40:[function(require,module,exports){
-var global = typeof window === 'undefined' ? this : window
-
-var _raf =
-  global.requestAnimationFrame ||
-  global.webkitRequestAnimationFrame ||
-  global.mozRequestAnimationFrame ||
-  global.msRequestAnimationFrame ||
-  global.oRequestAnimationFrame ||
-  (global.setImmediate ? function(fn, el) {
-    setImmediate(fn)
-  } :
-  function(fn, el) {
-    setTimeout(fn, 0)
-  })
-
-module.exports = _raf
-
-},{}],41:[function(require,module,exports){
+},{"raf/polyfill":47,"virtual-dom/create-element":59,"virtual-dom/diff":60,"virtual-dom/patch":63}],41:[function(require,module,exports){
 module.exports = addListener
 
 function addListener(observArray, observ) {
@@ -3365,7 +3381,7 @@ function ObservHash(hash) {
     return obs
 }
 
-},{"observ":46,"xtend":90}],46:[function(require,module,exports){
+},{"observ":46,"xtend":91}],46:[function(require,module,exports){
 module.exports = Observable
 
 function Observable(value) {
@@ -3395,6 +3411,24 @@ function Observable(value) {
 }
 
 },{}],47:[function(require,module,exports){
+var global = typeof window === 'undefined' ? this : window
+
+var _raf =
+  global.requestAnimationFrame ||
+  global.webkitRequestAnimationFrame ||
+  global.mozRequestAnimationFrame ||
+  global.msRequestAnimationFrame ||
+  global.oRequestAnimationFrame ||
+  (global.setImmediate ? function(fn, el) {
+    setImmediate(fn)
+  } :
+  function(fn, el) {
+    setTimeout(fn, 0)
+  })
+
+module.exports = _raf
+
+},{}],48:[function(require,module,exports){
 var extend = require('xtend')
 var getFormData = require('form-data-set/element')
 
@@ -3435,7 +3469,7 @@ function handleEvent(ev) {
     }
 }
 
-},{"form-data-set/element":51,"xtend":54}],48:[function(require,module,exports){
+},{"form-data-set/element":52,"xtend":55}],49:[function(require,module,exports){
 module.exports = SinkEventHandler
 
 function SinkEventHandler(sink, data) {
@@ -3458,7 +3492,7 @@ function handleEvent(ev) {
     }
 }
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 module.exports = KeyEventHandler
 
 function KeyEventHandler(fn, key, data) {
@@ -3479,7 +3513,7 @@ function handleEvent(ev) {
     }
 }
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 var slice = Array.prototype.slice
 
 module.exports = iterativelyWalk
@@ -3505,7 +3539,7 @@ function iterativelyWalk(nodes, cb) {
     }
 }
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 var walk = require('dom-walk')
 
 var FormData = require('./index.js')
@@ -3531,7 +3565,7 @@ function getFormData(rootElem) {
     return FormData(elements)
 }
 
-},{"./index.js":52,"dom-walk":50}],52:[function(require,module,exports){
+},{"./index.js":53,"dom-walk":51}],53:[function(require,module,exports){
 /*jshint maxcomplexity: 10*/
 
 module.exports = FormData
@@ -3608,9 +3642,9 @@ function filterNull(val) {
     return val !== null
 }
 
-},{}],53:[function(require,module,exports){
-module.exports=require(37)
 },{}],54:[function(require,module,exports){
+module.exports=require(38)
+},{}],55:[function(require,module,exports){
 var hasKeys = require("./has-keys")
 
 module.exports = extend
@@ -3635,7 +3669,7 @@ function extend() {
     return target
 }
 
-},{"./has-keys":53}],55:[function(require,module,exports){
+},{"./has-keys":54}],56:[function(require,module,exports){
 var extend = require('xtend')
 var getFormData = require('form-data-set/element')
 
@@ -3663,7 +3697,7 @@ function handleEvent(ev) {
         (ev.type === 'click' && target.tagName === 'BUTTON') ||
         (
             (target.type === 'text' || target.tagName === 'TEXTAREA') &&
-            (ev.keyCode === ENTER && !ev.shiftKey && ev.type === 'keydown')
+            (ev.keyCode === ENTER && !ev.shiftKey && ev.type === 'input')
         )
 
     if (!isValid) {
@@ -3680,7 +3714,7 @@ function handleEvent(ev) {
     }
 }
 
-},{"form-data-set/element":51,"xtend":54}],56:[function(require,module,exports){
+},{"form-data-set/element":52,"xtend":55}],57:[function(require,module,exports){
 var extend = require('xtend')
 var getFormData = require('form-data-set/element')
 
@@ -3709,7 +3743,7 @@ function handleEvent(ev) {
     }
 }
 
-},{"form-data-set/element":51,"xtend":54}],57:[function(require,module,exports){
+},{"form-data-set/element":52,"xtend":55}],58:[function(require,module,exports){
 var createElement = require("virtual-dom/create-element")
 var diff = require("virtual-dom/diff")
 var patch = require("virtual-dom/patch")
@@ -3798,24 +3832,24 @@ function init() {
     return createElement(this.vnode)
 }
 
-},{"virtual-dom/create-element":58,"virtual-dom/diff":59,"virtual-dom/patch":62}],58:[function(require,module,exports){
+},{"virtual-dom/create-element":59,"virtual-dom/diff":60,"virtual-dom/patch":63}],59:[function(require,module,exports){
 var createElement = require("./vdom/create-element")
 
 module.exports = createElement
 
-},{"./vdom/create-element":64}],59:[function(require,module,exports){
+},{"./vdom/create-element":65}],60:[function(require,module,exports){
 var diff = require("./vtree/diff")
 
 module.exports = diff
 
-},{"./vtree/diff":69}],60:[function(require,module,exports){
+},{"./vtree/diff":70}],61:[function(require,module,exports){
 module.exports = isObject
 
 function isObject(x) {
     return typeof x === "object" && x !== null
 }
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 var nativeIsArray = Array.isArray
 var toString = Object.prototype.toString
 
@@ -3825,12 +3859,12 @@ function isArray(obj) {
     return toString.call(obj) === "[object Array]"
 }
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 var patch = require("./vdom/patch")
 
 module.exports = patch
 
-},{"./vdom/patch":67}],63:[function(require,module,exports){
+},{"./vdom/patch":68}],64:[function(require,module,exports){
 var isObject = require("is-object")
 
 var isHook = require("../vtree/is-vhook")
@@ -3861,7 +3895,7 @@ function applyProperties(node, props, previous) {
     }
 }
 
-},{"../vtree/is-vhook":70,"is-object":60}],64:[function(require,module,exports){
+},{"../vtree/is-vhook":71,"is-object":61}],65:[function(require,module,exports){
 var document = require("global/document")
 
 var applyProperties = require("./apply-properties")
@@ -3906,7 +3940,7 @@ function createElement(vnode, opts) {
     return node
 }
 
-},{"../vtree/is-vnode":71,"../vtree/is-vtext":72,"../vtree/is-widget":73,"./apply-properties":63,"global/document":32}],65:[function(require,module,exports){
+},{"../vtree/is-vnode":72,"../vtree/is-vtext":73,"../vtree/is-widget":74,"./apply-properties":64,"global/document":33}],66:[function(require,module,exports){
 // Maps a virtual DOM tree onto a real DOM tree in an efficient manner.
 // We don't want to read all of the DOM nodes in the tree so we use
 // the in-order tree indexing to eliminate recursion down certain branches.
@@ -3993,7 +4027,7 @@ function ascending(a, b) {
     return a > b ? 1 : -1
 }
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 var applyProperties = require("./apply-properties")
 
 var isWidget = require("../vtree/is-widget")
@@ -4129,7 +4163,7 @@ function reorderChildren(domNode, bIndex) {
     }
 }
 
-},{"../vtree/is-widget":73,"../vtree/vpatch":76,"./apply-properties":63,"./create-element":64,"./update-widget":68}],67:[function(require,module,exports){
+},{"../vtree/is-widget":74,"../vtree/vpatch":77,"./apply-properties":64,"./create-element":65,"./update-widget":69}],68:[function(require,module,exports){
 var document = require("global/document")
 var isArray = require("x-is-array")
 
@@ -4204,7 +4238,7 @@ function patchIndices(patches) {
     return indices
 }
 
-},{"./dom-index":65,"./patch-op":66,"global/document":32,"x-is-array":61}],68:[function(require,module,exports){
+},{"./dom-index":66,"./patch-op":67,"global/document":33,"x-is-array":62}],69:[function(require,module,exports){
 var isWidget = require("../vtree/is-widget")
 
 module.exports = updateWidget
@@ -4221,7 +4255,7 @@ function updateWidget(a, b) {
     return false
 }
 
-},{"../vtree/is-widget":73}],69:[function(require,module,exports){
+},{"../vtree/is-widget":74}],70:[function(require,module,exports){
 var isArray = require("x-is-array")
 var isObject = require("is-object")
 
@@ -4517,7 +4551,7 @@ function appendPatch(apply, patch) {
     }
 }
 
-},{"./is-vnode":71,"./is-vtext":72,"./is-widget":73,"./vpatch":76,"is-object":60,"x-is-array":61}],70:[function(require,module,exports){
+},{"./is-vnode":72,"./is-vtext":73,"./is-widget":74,"./vpatch":77,"is-object":61,"x-is-array":62}],71:[function(require,module,exports){
 module.exports = isHook
 
 function isHook(hook) {
@@ -4525,7 +4559,7 @@ function isHook(hook) {
         !hook.hasOwnProperty("hook")
 }
 
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = isVirtualNode
@@ -4538,7 +4572,7 @@ function isVirtualNode(x) {
     return x.type === "VirtualNode" && x.version === version
 }
 
-},{"./version":74}],72:[function(require,module,exports){
+},{"./version":75}],73:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = isVirtualText
@@ -4551,17 +4585,17 @@ function isVirtualText(x) {
     return x.type === "VirtualText" && x.version === version
 }
 
-},{"./version":74}],73:[function(require,module,exports){
+},{"./version":75}],74:[function(require,module,exports){
 module.exports = isWidget
 
 function isWidget(w) {
     return w && typeof w.init === "function" && typeof w.update === "function"
 }
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 module.exports = "1"
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 var version = require("./version")
 var isVNode = require("./is-vnode")
 var isWidget = require("./is-widget")
@@ -4626,7 +4660,7 @@ function VirtualNode(tagName, properties, children, key, namespace) {
 VirtualNode.prototype.version = version
 VirtualNode.prototype.type = "VirtualNode"
 
-},{"./is-vhook":70,"./is-vnode":71,"./is-widget":73,"./version":74}],76:[function(require,module,exports){
+},{"./is-vhook":71,"./is-vnode":72,"./is-widget":74,"./version":75}],77:[function(require,module,exports){
 var version = require("./version")
 
 VirtualPatch.NONE = 0
@@ -4649,7 +4683,7 @@ function VirtualPatch(type, vNode, patch) {
 VirtualPatch.prototype.version = version.split(".")
 VirtualPatch.prototype.type = "VirtualPatch"
 
-},{"./version":74}],77:[function(require,module,exports){
+},{"./version":75}],78:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = VirtualText
@@ -4661,7 +4695,7 @@ function VirtualText(text) {
 VirtualText.prototype.version = version
 VirtualText.prototype.type = "VirtualText"
 
-},{"./version":74}],78:[function(require,module,exports){
+},{"./version":75}],79:[function(require,module,exports){
 module.exports = AttributeHook;
 
 function AttributeHook(value) {
@@ -4680,7 +4714,7 @@ AttributeHook.prototype.hook = function (node, prop, prev) {
     node.setAttributeNS(null, prop, this.value)
 }
 
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var DataSet = require("data-set")
 
 module.exports = DataSetHook;
@@ -4700,7 +4734,7 @@ DataSetHook.prototype.hook = function (node, propertyName) {
     ds[propName] = this.value;
 };
 
-},{"data-set":83}],80:[function(require,module,exports){
+},{"data-set":84}],81:[function(require,module,exports){
 module.exports = SoftSetHook;
 
 function SoftSetHook(value) {
@@ -4717,7 +4751,7 @@ SoftSetHook.prototype.hook = function (node, propertyName) {
     }
 };
 
-},{}],81:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var VNode = require("virtual-dom/vtree/vnode.js")
 var VText = require("virtual-dom/vtree/vtext.js")
 var isVNode = require("virtual-dom/vtree/is-vnode")
@@ -4803,19 +4837,19 @@ function isChildren(x) {
     return typeof x === "string" || Array.isArray(x)
 }
 
-},{"./hooks/data-set-hook.js":79,"./hooks/soft-set-hook.js":80,"./parse-tag.js":88,"virtual-dom/vtree/is-vhook":70,"virtual-dom/vtree/is-vnode":71,"virtual-dom/vtree/is-vtext":72,"virtual-dom/vtree/is-widget":73,"virtual-dom/vtree/vnode.js":75,"virtual-dom/vtree/vtext.js":77}],82:[function(require,module,exports){
-module.exports=require(19)
-},{}],83:[function(require,module,exports){
+},{"./hooks/data-set-hook.js":80,"./hooks/soft-set-hook.js":81,"./parse-tag.js":89,"virtual-dom/vtree/is-vhook":71,"virtual-dom/vtree/is-vnode":72,"virtual-dom/vtree/is-vtext":73,"virtual-dom/vtree/is-widget":74,"virtual-dom/vtree/vnode.js":76,"virtual-dom/vtree/vtext.js":78}],83:[function(require,module,exports){
 module.exports=require(20)
-},{"./create-hash.js":82,"individual":84,"weakmap-shim/create-store":86}],84:[function(require,module,exports){
-module.exports=require(23)
-},{"global":85}],85:[function(require,module,exports){
-module.exports=require(24)
-},{}],86:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 module.exports=require(21)
-},{"./hidden-store.js":87}],87:[function(require,module,exports){
+},{"./create-hash.js":83,"individual":85,"weakmap-shim/create-store":87}],85:[function(require,module,exports){
+module.exports=require(24)
+},{"global":86}],86:[function(require,module,exports){
+module.exports=require(25)
+},{}],87:[function(require,module,exports){
 module.exports=require(22)
-},{}],88:[function(require,module,exports){
+},{"./hidden-store.js":88}],88:[function(require,module,exports){
+module.exports=require(23)
+},{}],89:[function(require,module,exports){
 var classIdSplit = /([\.#]?[a-zA-Z0-9_:-]+)/
 var notClassId = /^\.|#/
 
@@ -4866,7 +4900,7 @@ function parseTag(tag, props) {
     return tagName ? tagName.toLowerCase() : "div"
 }
 
-},{}],89:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 var attributeHook = require("./hooks/attribute-hook.js")
 var h = require("./index.js")
 
@@ -4919,7 +4953,7 @@ function isChildren(x) {
     return typeof x === "string" || Array.isArray(x)
 }
 
-},{"./hooks/attribute-hook.js":78,"./index.js":81}],90:[function(require,module,exports){
+},{"./hooks/attribute-hook.js":79,"./index.js":82}],91:[function(require,module,exports){
 module.exports = extend
 
 function extend() {
@@ -4938,7 +4972,7 @@ function extend() {
     return target
 }
 
-},{}],91:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 module.exports = TimeTravel
 
 function TimeTravel(state) {
