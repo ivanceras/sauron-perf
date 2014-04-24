@@ -255,6 +255,40 @@ Suites.push({
 });
 
 Suites.push({
+    name: 'Om v',
+    url: 'todomvc/om05/index.html',
+    version: '0.5.0 + React 0.9.0',
+    prepare: function (runner, contentWindow, contentDocument) {
+        return runner.waitForElement('#new-todo').then(function (element) {
+            element.focus();
+            return element;
+        });
+    },
+    tests: [
+        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+            var todomvc = contentWindow.todomvc;
+            for (var i = 0; i < numberOfItemsToAdd; i++) {
+                var keydownEvent = document.createEvent('Event');
+                keydownEvent.initEvent('keydown', true, true);
+                keydownEvent.which = 13; // VK_ENTER
+                newTodo.value = 'Something to do ' + i;
+                newTodo.dispatchEvent(keydownEvent);
+            }
+        }),
+        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var checkboxes = contentDocument.querySelectorAll('.toggle');
+            for (var i = 0; i < checkboxes.length; i++)
+                checkboxes[i].click();
+        }),
+        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var deleteButtons = contentDocument.querySelectorAll('.destroy');
+            for (var i = 0; i < deleteButtons.length; i++)
+                deleteButtons[i].click();
+        })
+    ]
+});
+
+Suites.push({
     name: 'Ractive',
     url: 'todomvc/ractive/index.html',
     version: '0.3.9',
