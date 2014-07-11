@@ -2,40 +2,6 @@ var numberOfItemsToAdd = 100;
 var Suites = [];
 
 Suites.push({
-    name: 'Vue',
-    url: 'todomvc/vue/index.html',
-    version: '0.10.0',
-    prepare: function (runner, contentWindow, contentDocument) {
-        return runner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            var app = contentWindow.app;
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                var keyupEvent = document.createEvent('Event');
-                keyupEvent.initEvent('keyup', true, true);
-                keyupEvent.keyCode = 13;
-                app.newTodo = 'Something to do ' + i;
-                newTodo.dispatchEvent(keyupEvent)
-            }
-        }),
-        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
-                checkboxes[i].click();
-        }),
-        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
-        })
-    ]
-});
-
-Suites.push({
     name: 'Backbone',
     url: 'todomvc/backbone/index.html',
     version: '1.1.2',
@@ -55,40 +21,6 @@ Suites.push({
                 keypressEvent.which = 13;
                 newTodo.value = 'Something to do ' + i;
                 newTodo.dispatchEvent(keypressEvent)
-            }
-        }),
-        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
-                checkboxes[i].click();
-        }),
-        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
-        })
-    ]
-});
-
-Suites.push({
-    name: 'Knockout',
-    url: 'todomvc/knockoutjs/index.html',
-    version: '3.1.0',
-    prepare: function (runner, contentWindow, contentDocument) {
-        return runner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            var viewModel = contentWindow.viewModel;
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                var keyupEvent = document.createEvent('Event');
-                keyupEvent.initEvent('keyup', true, true);
-                keyupEvent.keyCode = 13;
-                viewModel.current('Something to do ' + i);
-                newTodo.dispatchEvent(keyupEvent);
             }
         }),
         new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
@@ -223,40 +155,6 @@ Suites.push({
 Suites.push({
     name: 'Om',
     url: 'todomvc/om/index.html',
-    version: '? + React 0.8.0',
-    prepare: function (runner, contentWindow, contentDocument) {
-        return runner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            var todomvc = contentWindow.todomvc;
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                var keydownEvent = document.createEvent('Event');
-                keydownEvent.initEvent('keydown', true, true);
-                keydownEvent.which = 13; // VK_ENTER
-                newTodo.value = 'Something to do ' + i;
-                newTodo.dispatchEvent(keydownEvent);
-            }
-        }),
-        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
-                checkboxes[i].click();
-        }),
-        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
-        })
-    ]
-});
-
-Suites.push({
-    name: 'Om v',
-    url: 'todomvc/om05/index.html',
     version: '0.5.0 + React 0.9.0',
     prepare: function (runner, contentWindow, contentDocument) {
         return runner.waitForElement('#new-todo').then(function (element) {
@@ -272,76 +170,6 @@ Suites.push({
                 keydownEvent.initEvent('keydown', true, true);
                 keydownEvent.which = 13; // VK_ENTER
                 newTodo.value = 'Something to do ' + i;
-                newTodo.dispatchEvent(keydownEvent);
-            }
-        }),
-        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
-                checkboxes[i].click();
-        }),
-        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
-        })
-    ]
-});
-
-Suites.push({
-    name: 'Ractive',
-    url: 'todomvc/ractive/index.html',
-    version: '0.3.9',
-    prepare: function (runner, contentWindow, contentDocument) {
-        return runner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                var keydownEvent = document.createEvent('Event');
-                keydownEvent.initEvent('keydown', true, true);
-                keydownEvent.which = 13; // VK_ENTER
-                newTodo.value = 'Something to do ' + i;
-                newTodo.dispatchEvent(keydownEvent);
-            }
-        }),
-        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
-                checkboxes[i].click();
-        }),
-        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
-        })
-    ]
-});
-
-Suites.push({
-    name: 'Quiescent',
-    url: 'todomvc/quiescent/index.html',
-    version: '?',
-    prepare: function (runner, contentWindow, contentDocument) {
-        return runner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                var inputEvent = document.createEvent('Event');
-                inputEvent.initEvent('input', true, true);
-                newTodo.value = 'Something to do ' + i;
-                newTodo.dispatchEvent(inputEvent);
-
-                var keydownEvent = document.createEvent('Event');
-                keydownEvent.initEvent('keydown', true, true);
-                keydownEvent.keyCode = 13; // VK_ENTER
                 newTodo.dispatchEvent(keydownEvent);
             }
         }),
