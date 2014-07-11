@@ -1,13 +1,15 @@
-# mercury-perf
+# TodoMVC Performance Comparison
 
-mercury performance benchmarks
+Performance comparison between TodoMVC implementations from a few of the most
+well-known entries:
 
-## Installation
+  * Backbone
+  * Ember
+  * Angular
+  * React
+  * Om
 
-`npm install mercury-perf`
+Adding two new contenders that tend to be significantly faster:
 
-## Contributors
-
- - Matt Esch
-
-## MIT Licenced
+  * Mercury
+  * Elm
