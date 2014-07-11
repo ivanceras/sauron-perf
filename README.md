@@ -1,5 +1,7 @@
 # TodoMVC Performance Comparison
 
+[**Run!**](http://evancz.github.io/todomvc-perf-comparison/)
+
 Performance comparison between TodoMVC implementations from a few of the most
 well-known entries:
 
