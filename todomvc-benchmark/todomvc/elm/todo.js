@@ -1,5 +1,4 @@
-<!DOCTYPE HTML>
-<html><head><meta charset="UTF-8"><title>Todo</title><script type="text/javascript">'use strict';
+'use strict';
 var Elm = {}; Elm.Native = {}; Elm.Native.Graphics = {};
 var ElmRuntime = {}; ElmRuntime.Render = {};
 Elm.Native.Array = {};
@@ -8429,6 +8428,14 @@ function addReceivers(ports) {
             if (v.length > 0) window.location = v;
         });
     }
+    if ('focus' in ports) {
+        ports.focus.subscribe(function(selector) {
+            var nodes = document.querySelectorAll(selector);
+            if (nodes.length === 1 && document.activeElement !== nodes[0]) {
+                nodes[0].focus();
+            }
+        });
+    }
     if ('favicon' in ports) {
         if (typeof ports.favicon === 'string') {
             changeFavicon(ports.favicon);
@@ -9351,7 +9358,7 @@ ElmRuntime.Render.Utils = function() {
           addTransform: addTransform,
           removeTransform: removeTransform};
 };
-</script><script type="text/javascript">(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = createHash
 
 function createHash(elem) {
@@ -11230,6 +11237,36 @@ Elm.Main.make = function (_elm) {
    };
    var NoOp = {ctor: "NoOp"};
    var actions = $Graphics$Input.input(NoOp);
+   var focus = $Native$Ports.portOut("focus",
+   $Native$Ports.outgoingSignal(function (v) {
+      return v;
+   }),
+   function () {
+      var toSelector = function (_v0) {
+         return function () {
+            switch (_v0.ctor)
+            {case "EditingTask":
+               return _L.append("#todo-",
+                 $String.show(_v0._0));}
+            _E.Case($moduleName,
+            "on line 37, column 42 to 61");
+         }();
+      };
+      var needsFocus = function (act) {
+         return function () {
+            switch (act.ctor)
+            {case "EditingTask":
+               return act._1;}
+            return false;
+         }();
+      };
+      return A2($Signal._op["<~"],
+      toSelector,
+      A3($Signal.keepIf,
+      needsFocus,
+      A2(EditingTask,0,true),
+      actions.signal));
+   }());
    var header = function (value) {
       return A4($Html.node,
       "header",
@@ -11300,7 +11337,7 @@ Elm.Main.make = function (_elm) {
                                    _L.fromArray([]),
                                    _L.fromArray([A2($Html$Events.onclick,
                                    actions.handle,
-                                   function (_v0) {
+                                   function (_v7) {
                                       return function () {
                                          return A2(Check,
                                          todo.id,
@@ -11314,7 +11351,7 @@ Elm.Main.make = function (_elm) {
                                    _L.fromArray([]),
                                    _L.fromArray([A2($Html$Events.ondblclick,
                                    actions.handle,
-                                   function (_v2) {
+                                   function (_v9) {
                                       return function () {
                                          return A2(EditingTask,
                                          todo.id,
@@ -11335,14 +11372,19 @@ Elm.Main.make = function (_elm) {
                       ,A5($Html.eventNode,
                       "input",
                       _L.fromArray([A2($Html._op[":="],
-                      "className",
-                      "edit")]),
-                      _L.fromArray([A2($Html._op[":="],
+                                   "className",
+                                   "edit")
+                                   ,A2($Html._op[":="],
                                    "value",
                                    todo.title)
                                    ,A2($Html._op[":="],
                                    "name",
-                                   "title")]),
+                                   "title")
+                                   ,A2($Html._op[":="],
+                                   "id",
+                                   _L.append("todo-",
+                                   $String.show(todo.id)))]),
+                      _L.fromArray([]),
                       _L.fromArray([A4($Html$Events.on,
                                    "input",
                                    $Html$Events.getValue,
@@ -11376,7 +11418,7 @@ Elm.Main.make = function (_elm) {
                   case "Completed":
                   return todo.completed;}
                _E.Case($moduleName,
-               "between lines 145 and 150");
+               "between lines 152 and 157");
             }();
          };
          return A4($Html.node,
@@ -11404,7 +11446,7 @@ Elm.Main.make = function (_elm) {
                       _L.fromArray([]),
                       _L.fromArray([A2($Html$Events.onclick,
                       actions.handle,
-                      function (_v5) {
+                      function (_v12) {
                          return function () {
                             return CheckAll($Basics.not(allCompleted));
                          }();
@@ -11578,7 +11620,7 @@ Elm.Main.make = function (_elm) {
                  state);
               }();}
          _E.Case($moduleName,
-         "between lines 49 and 87");
+         "between lines 57 and 95");
       }();
    });
    var Active = {ctor: "Active"};
@@ -11674,16 +11716,6 @@ Elm.Main.make = function (_elm) {
       "visibility",
       "hidden")]),
       _L.fromArray([A4($Html.node,
-                   "link",
-                   _L.fromArray([A2($Html._op[":="],
-                                "rel",
-                                "stylesheet")
-                                ,A2($Html._op[":="],
-                                "href",
-                                "style.css")]),
-                   _L.fromArray([]),
-                   _L.fromArray([]))
-                   ,A4($Html.node,
                    "section",
                    _L.fromArray([A2($Html._op[":="],
                    "id",
@@ -11703,20 +11735,20 @@ Elm.Main.make = function (_elm) {
                    ,infoFooter]));
    };
    var scene = F2(function (state,
-   _v18) {
+   _v25) {
       return function () {
-         switch (_v18.ctor)
+         switch (_v25.ctor)
          {case "_Tuple2":
             return A4($Graphics$Element.container,
-              _v18._0,
-              _v18._1,
+              _v25._0,
+              _v25._1,
               $Graphics$Element.midTop,
               A3($Html.toElement,
               550,
-              _v18._1,
+              _v25._1,
               render(state)));}
          _E.Case($moduleName,
-         "on line 100, column 5 to 61");
+         "on line 108, column 5 to 61");
       }();
    });
    var main = A3($Signal.lift2,
@@ -11726,11 +11758,6 @@ Elm.Main.make = function (_elm) {
    state,
    actions.signal),
    $Window.dimensions);
-   var title = $Native$Ports.portOut("title",
-   function (v) {
-      return v;
-   },
-   "Elm • TodoMVC");
    _elm.Main.values = {_op: _op
                       ,All: All
                       ,Completed: Completed
@@ -11911,7 +11938,7 @@ Elm.Html.Events.make = function (_elm) {
    value) {
       return A4($Native$Html.on,
       "submit",
-      $Basics.id,
+      $Native$Html.getAnything,
       handle,
       $Basics.always(value));
    });
@@ -11919,7 +11946,7 @@ Elm.Html.Events.make = function (_elm) {
    value) {
       return A4($Native$Html.on,
       "focus",
-      $Basics.id,
+      $Native$Html.getAnything,
       handle,
       $Basics.always(value));
    });
@@ -11927,7 +11954,7 @@ Elm.Html.Events.make = function (_elm) {
    value) {
       return A4($Native$Html.on,
       "blur",
-      $Basics.id,
+      $Native$Html.getAnything,
       handle,
       $Basics.always(value));
    });
@@ -12004,4 +12031,4 @@ Elm.Html.Events.make = function (_elm) {
                              ,getAnything: getAnything
                              ,filterMap: filterMap};
    return _elm.Html.Events.values;
-};</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script><noscript></noscript></body></html>
+};
