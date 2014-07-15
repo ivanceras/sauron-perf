@@ -5,8 +5,13 @@
 <script src="resources/benchmark-runner.js" defer></script>
 <script src="resources/tests.js" defer></script>
 <style>
+body {
+  font-family: 'Lucida Grande','Trebuchet MS','Bitstream Vera Sans',Verdana,Helvetica,sans-serif;
+  background-color: rgb(245, 245, 245);
+}
 iframe { border: 1px solid black; }
-ol { list-style: none; margin: 0; padding: 0; }
+button { margin: 15px 5px; }
+ol { list-style: none; margin: 5px 0; padding: 0; }
 ol ol { margin-left: 2em; list-position: outside; }
 .running { text-decoration: underline; }
 .ran { color: grey; }
@@ -29,6 +34,17 @@ function createUIForSuites(suites, onstep, onrun) {
     var control = document.createElement('nav');
     var ol = document.createElement('ol');
     var checkboxes = [];
+
+    var button = document.createElement('button');
+    button.textContent = 'Step Tests';
+    button.onclick = onstep;
+    control.appendChild(button);
+
+    var button = runButton = document.createElement('button');
+    button.textContent = 'Run All';
+    button.onclick = onrun;
+    control.appendChild(button);
+
     for (var suiteIndex = 0; suiteIndex < suites.length; suiteIndex++) {
         var suite = suites[suiteIndex];
         var li = document.createElement('li');
@@ -63,16 +79,6 @@ function createUIForSuites(suites, onstep, onrun) {
     }
 
     control.appendChild(ol);
-
-    var button = document.createElement('button');
-    button.textContent = 'Step';
-    button.onclick = onstep;
-    control.appendChild(button);
-
-    var button = runButton = document.createElement('button');
-    button.textContent = 'Run';
-    button.onclick = onrun;
-    control.appendChild(button);
 
     return control;
 }
@@ -150,14 +156,39 @@ function startTest() {
                 results[key] += runData[key].total
             }
         })
+        var maxKeyLength = 0;
+        var maxValueLength = 0;
         for (var key in results) {
-            results[key] /= runs.length
+            results[key] = Math.round(results[key] / runs.length);
+            maxKeyLength = Math.max(maxKeyLength, key.length);
+            maxValueLength = Math.max(maxValueLength, (results[key] + '').length);
         }
-        var res = JSON.stringify(results, null, 4),
-            pre = document.createElement('pre')
-        pre.textContent = runs.length + ' runs average:\n' + res + '\n'
-            + 'See console output for more details.'
-        document.body.appendChild(pre)
+        var resultsString = '';
+        for (var key in results) {
+            var keyPadding = Array(maxKeyLength - key.length + 1).join(' ');
+            var value = results[key] + '';
+            var valuePadding = Array(maxValueLength - value.length + 1).join(' ');
+            resultsString += '    ' + key + keyPadding + '  :  ' + valuePadding + value + ' ms\n';
+        }
+
+        var report = document.createElement('div');
+        report.style.padding = '20px';
+
+        var description = document.createElement('span');
+        var run = ' run' + (runs.length > 1 ? 's' : '');
+        description.innerHTML = 'Average time to completion in milliseconds over '
+            + runs.length + run + '. <b>Lower is better</b>:'
+        report.appendChild(description);
+
+        var pre = document.createElement('pre');
+        pre.textContent = resultsString;
+        report.appendChild(pre);
+
+        var details = document.createElement('span');
+        details.innerHTML = 'See console output for more details.'
+        report.appendChild(details);
+
+        document.body.appendChild(report);
     }
 }
 
