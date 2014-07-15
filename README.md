@@ -1,17 +1,17 @@
 # TodoMVC Performance Comparison
 
-[**Run!**](http://evancz.github.io/todomvc-perf-comparison/)
+This is a performance comparison between TodoMVC implementations from a few of
+the most well-known entries. Here are some sample results from running this in
+Chrome 35 with OSX 10.9.4 on a Macbook Air:
 
-Performance comparison between TodoMVC implementations from a few of the most
-well-known entries:
+[![Sample results for Chrome 35 + OSX 10.9.4 on a Macbook Air](sampleResults.png)][runner]
 
-  * Backbone
-  * Ember
-  * Angular
-  * React
-  * Om
+[**Run it yourself**][runner] to see how it works on your machine or in other
+browsers!
 
-Adding two new contenders that tend to be significantly faster:
+[runner]: http://evancz.github.io/todomvc-perf-comparison/
 
-  * Mercury
-  * Elm
+Both Mercury and Elm are based on the [virtual-dom][] project which appears to
+be extremely fast.
+
+[virtual-dom]: https://github.com/Matt-Esch/virtual-dom
