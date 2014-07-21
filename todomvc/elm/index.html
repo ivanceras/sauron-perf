@@ -20,7 +20,6 @@ var todomvc = Elm.fullscreen(Elm.Todo, { getStorage: startingState });
 todomvc.ports.focus.subscribe(function(selector) {
     setTimeout(function() {
         var nodes = document.querySelectorAll(selector);
-        console.log(nodes);
         if (nodes.length === 1 && document.activeElement !== nodes[0]) {
             nodes[0].focus()
         }
@@ -28,7 +27,6 @@ todomvc.ports.focus.subscribe(function(selector) {
 });
 
 todomvc.ports.setStorage.subscribe(function(state) {
-    console.log(state);
     localStorage.setItem('todos-elm', JSON.stringify(state));
 });
 
