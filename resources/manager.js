@@ -144,7 +144,7 @@ google.load("visualization", "1", {packages:["corechart"]});
 function drawChart(results) {
     var rawData = [ [ "Project" , "Time", { role: "style"} ] ];
     for (var key in results) {
-        var color = key === 'Elm' ? 'rgb(140, 217, 217)': 'rgb(140, 217, 140)';
+        var color = key === 'Plait' ? 'rgb(140, 217, 217)': 'rgb(140, 217, 140)';
         rawData.push([ key, Math.round(results[key] / runs.length), color ]);
     }
     var data = google.visualization.arrayToDataTable(rawData);
