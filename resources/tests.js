@@ -95,7 +95,7 @@ Suites.push({
 Suites.push({
     name: 'Angular',
     url: 'todomvc/angularjs-perf/index.html',
-    version: '1.2.14',
+    version: '1.5.3',
     prepare: function (runner, contentWindow, contentDocument) {
         return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
