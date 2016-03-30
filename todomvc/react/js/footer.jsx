@@ -1,53 +1,57 @@
-/**
- * @jsx React.DOM
- */
 /*jshint quotmark:false */
 /*jshint white:false */
 /*jshint trailing:false */
 /*jshint newcap:false */
-/*global React, ALL_TODOS, ACTIVE_TODOS, Utils, COMPLETED_TODOS */
-(function (window) {
+/*global React */
+var app = app || {};
+
+(function () {
 	'use strict';
 
-	window.TodoFooter = React.createClass({
+	app.TodoFooter = React.createClass({
 		render: function () {
-			var activeTodoWord = Utils.pluralize(this.props.count, 'item');
+			var activeTodoWord = app.Utils.pluralize(this.props.count, 'item');
 			var clearButton = null;
 
 			if (this.props.completedCount > 0) {
 				clearButton = (
 					<button
-						id="clear-completed"
+						className="clear-completed"
 						onClick={this.props.onClearCompleted}>
-						{''}Clear completed ({this.props.completedCount}){''}
+						Clear completed
 					</button>
 				);
 			}
 
-			var show = {
-				ALL_TODOS: '',
-				ACTIVE_TODOS: '',
-				COMPLETED_TODOS: ''
-			};
-			show[this.props.nowShowing] = 'selected';
-
+			var nowShowing = this.props.nowShowing;
 			return (
-				<footer id="footer">
-					<span id="todo-count">
-						<strong>{this.props.count}</strong>
-						{' '}{activeTodoWord}{' '}left{''}
+				<footer className="footer">
+					<span className="todo-count">
+						<strong>{this.props.count}</strong> {activeTodoWord} left
 					</span>
-					<ul id="filters">
+					<ul className="filters">
 						<li>
-							<a href="#/" className={show[ALL_TODOS]}>All</a>
+							<a
+								href="#/"
+								className={classNames({selected: nowShowing === app.ALL_TODOS})}>
+									All
+							</a>
 						</li>
 						{' '}
 						<li>
-							<a href="#/active" className={show[ACTIVE_TODOS]}>Active</a>
+							<a
+								href="#/active"
+								className={classNames({selected: nowShowing === app.ACTIVE_TODOS})}>
+									Active
+							</a>
 						</li>
 						{' '}
 						<li>
-							<a href="#/completed" className={show[COMPLETED_TODOS]}>Completed</a>
+							<a
+								href="#/completed"
+								className={classNames({selected: nowShowing === app.COMPLETED_TODOS})}>
+									Completed
+							</a>
 						</li>
 					</ul>
 					{clearButton}
@@ -55,4 +59,4 @@
 			);
 		}
 	});
-})(window);
+})();

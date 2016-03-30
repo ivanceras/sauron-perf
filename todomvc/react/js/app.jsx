@@ -1,106 +1,79 @@
-/**
- * @jsx React.DOM
- */
 /*jshint quotmark:false */
 /*jshint white:false */
 /*jshint trailing:false */
 /*jshint newcap:false */
-/*global Utils, ALL_TODOS, ACTIVE_TODOS, COMPLETED_TODOS,
-	TodoItem, TodoFooter, React, Router*/
+/*global React, Router*/
+var app = app || {};
 
-(function (window, React) {
+(function () {
 	'use strict';
 
-	window.ALL_TODOS = 'all';
-	window.ACTIVE_TODOS = 'active';
-	window.COMPLETED_TODOS = 'completed';
+	app.ALL_TODOS = 'all';
+	app.ACTIVE_TODOS = 'active';
+	app.COMPLETED_TODOS = 'completed';
+	var TodoFooter = app.TodoFooter;
+	var TodoItem = app.TodoItem;
 
 	var ENTER_KEY = 13;
 
 	var TodoApp = React.createClass({
 		getInitialState: function () {
-			var todos = Utils.store('react-todos');
 			return {
-				todos: todos,
-				nowShowing: ALL_TODOS,
-				editing: null
+				nowShowing: app.ALL_TODOS,
+				editing: null,
+				newTodo: ''
 			};
 		},
 
 		componentDidMount: function () {
+			var setState = this.setState;
 			var router = Router({
-				'/': this.setState.bind(this, {nowShowing: ALL_TODOS}),
-				'/active': this.setState.bind(this, {nowShowing: ACTIVE_TODOS}),
-				'/completed': this.setState.bind(this, {nowShowing: COMPLETED_TODOS})
+				'/': setState.bind(this, {nowShowing: app.ALL_TODOS}),
+				'/active': setState.bind(this, {nowShowing: app.ACTIVE_TODOS}),
+				'/completed': setState.bind(this, {nowShowing: app.COMPLETED_TODOS})
 			});
-			router.init();
-			this.refs.newField.getDOMNode().focus();
+			router.init('/');
+		},
+
+		handleChange: function (event) {
+			this.setState({newTodo: event.target.value});
 		},
 
 		handleNewTodoKeyDown: function (event) {
-			if (event.which !== ENTER_KEY) {
+			if (event.keyCode !== ENTER_KEY) {
 				return;
 			}
 
-			var val = this.refs.newField.getDOMNode().value.trim();
-			var newTodo;
+			event.preventDefault();
+
+			var val = this.state.newTodo.trim();
 
 			if (val) {
-				newTodo = {
-					id: Utils.uuid(),
-					title: val,
-					completed: false
-				};
-				this.setState({todos: this.state.todos.concat([newTodo])});
-				this.refs.newField.getDOMNode().value = '';
+				this.props.model.addTodo(val);
+				this.setState({newTodo: ''});
 			}
-
-			return false;
 		},
 
 		toggleAll: function (event) {
 			var checked = event.target.checked;
-
-			// Note: it's usually better to use immutable data structures since they're easier to
-			// reason about and React works very well with them. That's why we use map() and filter()
-			// everywhere instead of mutating the array or todo items themselves.
-			var newTodos = this.state.todos.map(function (todo) {
-				return Utils.extend({}, todo, {completed: checked});
-			});
-
-			this.setState({todos: newTodos});
+			this.props.model.toggleAll(checked);
 		},
 
 		toggle: function (todoToToggle) {
-			var newTodos = this.state.todos.map(function (todo) {
-				return todo !== todoToToggle ? todo : Utils.extend({}, todo, {completed: !todo.completed});
-			});
-
-			this.setState({todos: newTodos});
+			this.props.model.toggle(todoToToggle);
 		},
 
 		destroy: function (todo) {
-			var newTodos = this.state.todos.filter(function (candidate) {
-				return candidate.id !== todo.id;
-			});
-
-			this.setState({todos: newTodos});
+			this.props.model.destroy(todo);
 		},
 
-		edit: function (todo, callback) {
-			// refer to todoItem.js `handleEdit` for the reasoning behind the
-			// callback
-			this.setState({editing: todo.id}, function () {
-				callback();
-			});
+		edit: function (todo) {
+			this.setState({editing: todo.id});
 		},
 
 		save: function (todoToSave, text) {
-			var newTodos = this.state.todos.map(function (todo) {
-				return todo !== todoToSave ? todo : Utils.extend({}, todo, {title: text});
-			});
-
-			this.setState({todos: newTodos, editing: null});
+			this.props.model.save(todoToSave, text);
+			this.setState({editing: null});
 		},
 
 		cancel: function () {
@@ -108,26 +81,19 @@
 		},
 
 		clearCompleted: function () {
-			var newTodos = this.state.todos.filter(function (todo) {
-				return !todo.completed;
-			});
-
-			this.setState({todos: newTodos});
-		},
-
-		componentDidUpdate: function () {
-			Utils.store('react-todos', this.state.todos);
+			this.props.model.clearCompleted();
 		},
 
 		render: function () {
-			var footer = null;
-			var main = null;
+			var footer;
+			var main;
+			var todos = this.props.model.todos;
 
-			var shownTodos = this.state.todos.filter(function (todo) {
+			var shownTodos = todos.filter(function (todo) {
 				switch (this.state.nowShowing) {
-				case ACTIVE_TODOS:
+				case app.ACTIVE_TODOS:
 					return !todo.completed;
-				case COMPLETED_TODOS:
+				case app.COMPLETED_TODOS:
 					return todo.completed;
 				default:
 					return true;
@@ -149,11 +115,11 @@
 				);
 			}, this);
 
-			var activeTodoCount = this.state.todos.reduce(function(accum, todo) {
+			var activeTodoCount = todos.reduce(function (accum, todo) {
 				return todo.completed ? accum : accum + 1;
 			}, 0);
 
-			var completedCount = this.state.todos.length - activeTodoCount;
+			var completedCount = todos.length - activeTodoCount;
 
 			if (activeTodoCount || completedCount) {
 				footer =
@@ -165,16 +131,16 @@
 					/>;
 			}
 
-			if (this.state.todos.length) {
+			if (todos.length) {
 				main = (
-					<section id="main">
+					<section className="main">
 						<input
-							id="toggle-all"
+							className="toggle-all"
 							type="checkbox"
 							onChange={this.toggleAll}
 							checked={activeTodoCount === 0}
 						/>
-						<ul id="todo-list">
+						<ul className="todo-list">
 							{todoItems}
 						</ul>
 					</section>
@@ -183,13 +149,15 @@
 
 			return (
 				<div>
-					<header id="header">
+					<header className="header">
 						<h1>todos</h1>
 						<input
-							ref="newField"
-							id="new-todo"
+							className="new-todo"
 							placeholder="What needs to be done?"
+							value={this.state.newTodo}
 							onKeyDown={this.handleNewTodoKeyDown}
+							onChange={this.handleChange}
+							autoFocus={true}
 						/>
 					</header>
 					{main}
@@ -199,14 +167,15 @@
 		}
 	});
 
-	React.renderComponent(<TodoApp />, document.getElementById('todoapp'));
-	React.renderComponent(
-		<div>
-			<p>Double-click to edit a todo</p>
-			<p>Created by{' '}
-				<a href="http://github.com/petehunt/">petehunt</a>
-			</p>
-			<p>Part of{' '}<a href="http://todomvc.com">TodoMVC</a></p>
-		</div>,
-		document.getElementById('info'));
-})(window, React);
+	var model = new app.TodoModel('react-todos');
+
+	function render() {
+		React.render(
+			<TodoApp model={model}/>,
+			document.getElementsByClassName('todoapp')[0]
+		);
+	}
+
+	model.subscribe(render);
+	render();
+})();

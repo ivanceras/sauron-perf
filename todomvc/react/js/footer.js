@@ -1,58 +1,62 @@
-/**
- * @jsx React.DOM
- */
 /*jshint quotmark:false */
 /*jshint white:false */
 /*jshint trailing:false */
 /*jshint newcap:false */
-/*global React, ALL_TODOS, ACTIVE_TODOS, Utils, COMPLETED_TODOS */
-(function (window) {
+/*global React */
+var app = app || {};
+
+(function () {
 	'use strict';
 
-	window.TodoFooter = React.createClass({displayName: 'TodoFooter',
+	app.TodoFooter = React.createClass({
 		render: function () {
-			var activeTodoWord = Utils.pluralize(this.props.count, 'item');
+			var activeTodoWord = app.Utils.pluralize(this.props.count, 'item');
 			var clearButton = null;
 
 			if (this.props.completedCount > 0) {
 				clearButton = (
-					React.DOM.button(
-						{id:"clear-completed",
-						onClick:this.props.onClearCompleted}, 
-						'',"Clear completed (",this.props.completedCount,")",''
-					)
+					React.createElement('button', {
+						className: "clear-completed",
+						onClick: this.props.onClearCompleted}, [
+						"Clear completed"
+					])
 				);
 			}
 
-			var show = {
-				ALL_TODOS: '',
-				ACTIVE_TODOS: '',
-				COMPLETED_TODOS: ''
-			};
-			show[this.props.nowShowing] = 'selected';
-
+			var nowShowing = this.props.nowShowing;
 			return (
-				React.DOM.footer( {id:"footer"}, 
-					React.DOM.span( {id:"todo-count"}, 
-						React.DOM.strong(null, this.props.count),
-						' ',activeTodoWord,' ',"left",''
-					),
-					React.DOM.ul( {id:"filters"}, 
-						React.DOM.li(null, 
-							React.DOM.a( {href:"#/", className:show[ALL_TODOS]}, "All")
-						),
+				React.createElement('footer', {className: "footer"}, [
+					React.createElement('span', {className: "todo-count"}, [
+						React.createElement('strong', null, [this.props.count])," ", activeTodoWord, " left"
+					]),
+					React.createElement('ul', {className: "filters"}, [
+						React.createElement('li', null, [
+							React.createElement('a', {
+								href: "#/",
+								className: classNames({selected: nowShowing === app.ALL_TODOS})}, [
+									"All"
+							])
+						]),
 						' ',
-						React.DOM.li(null, 
-							React.DOM.a( {href:"#/active", className:show[ACTIVE_TODOS]}, "Active")
-						),
+						React.createElement('li', null, [
+							React.createElement('a', {
+								href: "#/active",
+								className: classNames({selected: nowShowing === app.ACTIVE_TODOS})}, [
+									"Active"
+							])
+						]),
 						' ',
-						React.DOM.li(null, 
-							React.DOM.a( {href:"#/completed", className:show[COMPLETED_TODOS]}, "Completed")
-						)
-					),
+						React.createElement('li', null, [
+							React.createElement('a', {
+								href: "#/completed",
+								className: classNames({selected: nowShowing === app.COMPLETED_TODOS})}, [
+									"Completed"
+							])
+						])
+					]),
 					clearButton
-				)
+				])
 			);
 		}
 	});
-})(window);
+})();
