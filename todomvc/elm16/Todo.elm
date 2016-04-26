@@ -16,6 +16,7 @@ for notes on structuring more complex GUIs with Elm:
 https://github.com/evancz/elm-architecture-tutorial/
 -}
 
+import StartApp.Simple as StartApp
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -23,7 +24,6 @@ import Html.Lazy exposing (lazy, lazy2, lazy3)
 import Json.Decode as Json
 import Signal exposing (Signal, Address)
 import String
-import Window
 
 
 ---- MODEL ----
@@ -306,45 +306,8 @@ infoFooter =
 -- wire the entire application together
 main : Signal Html
 main =
-  Signal.map (view actions.address) model
-
-
--- manage the model of our application over time
-model : Signal Model
-model =
-  Signal.foldp update initialModel actions.signal
-
-
-initialModel : Model
-initialModel =
-  Maybe.withDefault emptyModel getStorage
-
-
--- actions from user input
-actions : Signal.Mailbox Action
-actions =
-  Signal.mailbox NoOp
-
-
-port focus : Signal String
-port focus =
-    let needsFocus act =
-            case act of
-              EditingTask id bool -> bool
-              _ -> False
-
-        toSelector act =
-            case act of
-              EditingTask id _ -> "#todo-" ++ toString id
-              _ -> ""
-    in
-        actions.signal
-          |> Signal.filter needsFocus (EditingTask 0 True)
-          |> Signal.map toSelector
-
-
--- interactions with localStorage to save the model
-port getStorage : Maybe Model
-
-port setStorage : Signal Model
-port setStorage = model
+  StartApp.start
+    { model = emptyModel
+    , update = update
+    , view = view
+    }
