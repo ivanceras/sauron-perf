@@ -214,7 +214,7 @@ taskList address visibility tasks =
 todoItem : Address Action -> Task -> Html
 todoItem address todo =
     li
-      [ classList [ ("completed", todo.completed), ("editing", todo.editing) ] ]
+      [ key (toString todo.id), classList [ ("completed", todo.completed), ("editing", todo.editing) ] ]
       [ div
           [ class "view" ]
           [ input

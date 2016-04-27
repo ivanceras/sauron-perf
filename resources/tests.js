@@ -1,6 +1,7 @@
-var numberOfItemsToAdd = 200;
+var numberOfItemsToAdd = 500;
 var Suites = [];
 
+/*
 Suites.push({
     name: 'React',
     url: 'todomvc/react/index.html',
@@ -34,6 +35,7 @@ Suites.push({
         })
     ]
 });
+*/
 
 Suites.push({
     name: 'Elm 0.16',
