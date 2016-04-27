@@ -147,12 +147,12 @@ view model =
       ]
 
 
---onEnter : (Int -> Action) -> Attribute Action
+onEnter : Action -> Attribute Action
 onEnter tagger =
     on "keydown" (Json.map (always tagger) (Json.customDecoder keyCode is13))
 
 
---is13 : Int -> Result String ()
+is13 : Int -> Result String ()
 is13 code =
   if code == 13 then Ok () else Err "not the right key code"
 
