@@ -1,4 +1,4 @@
-var numberOfItemsToAdd = 500;
+var numberOfItemsToAdd = 100;
 var Suites = [];
 
 /*
