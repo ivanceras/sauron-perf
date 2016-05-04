@@ -10352,7 +10352,6 @@ Elm.Todo.make = function (_elm) {
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
-   $Html$Lazy = Elm.Html.Lazy.make(_elm),
    $Json$Decode = Elm.Json.Decode.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
@@ -10484,9 +10483,7 @@ Elm.Todo.make = function (_elm) {
       _U.list([$Html$Attributes.$class("todomvc-wrapper"),$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "visibility",_1: "hidden"}]))]),
       _U.list([A2($Html.section,
               _U.list([$Html$Attributes.id("todoapp")]),
-              _U.list([A3($Html$Lazy.lazy2,taskEntry,address,model.field)
-                      ,A4($Html$Lazy.lazy3,taskList,address,model.visibility,model.tasks)
-                      ,A4($Html$Lazy.lazy3,controls,address,model.visibility,model.tasks)]))
+              _U.list([A2(taskEntry,address,model.field),A3(taskList,address,model.visibility,model.tasks),A3(controls,address,model.visibility,model.tasks)]))
               ,infoFooter]));
    });
    var NoOp = {ctor: "NoOp"};

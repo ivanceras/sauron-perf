@@ -20,7 +20,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.App
-import Html.Lazy exposing (lazy, lazy2, lazy3)
+import Html.Lazy exposing (lazy, lazy2)
 import Json.Decode as Json
 import String
 
@@ -139,9 +139,9 @@ view model =
       ]
       [ section
           [ id "todoapp" ]
-          [ lazy taskEntry model.field
-          , lazy2 taskList model.visibility model.tasks
-          , lazy2 controls model.visibility model.tasks
+          [ taskEntry model.field
+          , taskList model.visibility model.tasks
+          , controls model.visibility model.tasks
           ]
       , infoFooter
       ]

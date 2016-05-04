@@ -3143,12 +3143,16 @@ function dispatchEffects(managers, cmdBag, subBag)
 	gatherEffects(true, cmdBag, effectsDict, null);
 	gatherEffects(false, subBag, effectsDict, null);
 
-	for (var home in effectsDict)
+	for (var home in managers)
 	{
-		_elm_lang$core$Native_Scheduler.rawSend(managers[home], {
-			ctor: 'fx',
-			_0: effectsDict[home]
-		});
+		var fx = home in effectsDict
+			? effectsDict[home]
+			: {
+				cmds: _elm_lang$core$Native_List.Nil,
+				subs: _elm_lang$core$Native_List.Nil
+			};
+
+		_elm_lang$core$Native_Scheduler.rawSend(managers[home], { ctor: 'fx', _0: fx });
 	}
 }
 
@@ -5208,7 +5212,7 @@ function runHelp(decoder, value)
 				}
 				array[i] = result.value;
 			}
-			return _elm_lang$core$Native_Array.fromJSArray(array);
+			return ok(_elm_lang$core$Native_Array.fromJSArray(array));
 
 		case 'maybe':
 			var result = runHelp(decoder.decoder, value);
@@ -5472,6 +5476,7 @@ return {
 };
 
 }();
+
 var _elm_lang$core$Json_Encode$list = _elm_lang$core$Native_Json.encodeList;
 var _elm_lang$core$Json_Encode$array = _elm_lang$core$Native_Json.encodeArray;
 var _elm_lang$core$Json_Encode$object = _elm_lang$core$Native_Json.encodeObject;
