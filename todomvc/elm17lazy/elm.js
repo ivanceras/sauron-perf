@@ -7685,9 +7685,9 @@ var _evancz$elm_todomvc$Todo$view = function (model) {
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_evancz$elm_todomvc$Todo$taskEntry(model.field),
-						A2(_evancz$elm_todomvc$Todo$taskList, model.visibility, model.tasks),
-						A2(_evancz$elm_todomvc$Todo$controls, model.visibility, model.tasks)
+						A2(_elm_lang$html$Html_Lazy$lazy, _evancz$elm_todomvc$Todo$taskEntry, model.field),
+						A3(_elm_lang$html$Html_Lazy$lazy2, _evancz$elm_todomvc$Todo$taskList, model.visibility, model.tasks),
+						A3(_elm_lang$html$Html_Lazy$lazy2, _evancz$elm_todomvc$Todo$controls, model.visibility, model.tasks)
 					])),
 				_evancz$elm_todomvc$Todo$infoFooter
 			]));
