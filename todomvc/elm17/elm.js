@@ -2940,7 +2940,7 @@ function initWithFlags(moduleName, realInit, flagDecoder)
 		if (result.ctor === 'Err')
 		{
 			throw new Error(
-				'You trying to initialize module `' + moduleName + '` with an unexpected argument.\n'
+				'You are trying to initialize module `' + moduleName + '` with an unexpected argument.\n'
 				+ 'When trying to convert it to a usable Elm value, I run into this problem:\n\n'
 				+ result._0
 			);
@@ -5295,7 +5295,7 @@ function runHelp(decoder, value)
 			var realResult = decoder.callback(result.value);
 			if (realResult.ctor === 'Err')
 			{
-				throw new Error('TODO');
+				return badPrimitive('something custom', value);
 			}
 			return ok(realResult._0);
 
@@ -6115,7 +6115,10 @@ function diffHelp(a, b, patches, index)
 			b.node = b.thunk();
 			var subPatches = [];
 			diffHelp(a.node, b.node, subPatches, 0);
-			patches.push(makePatch('p-thunk', index, subPatches));
+			if (subPatches.length > 0)
+			{
+				patches.push(makePatch('p-thunk', index, subPatches));
+			}
 			return;
 
 		case 'tagger':
@@ -6256,7 +6259,7 @@ function diffFacts(a, b, category)
 	{
 		if (aKey === STYLE_KEY || aKey === EVENT_KEY || aKey === ATTR_KEY || aKey === ATTR_NS_KEY)
 		{
-			var subDiff = diffFacts(a[aKey], b[bKey] || {}, aKey);
+			var subDiff = diffFacts(a[aKey], b[aKey] || {}, aKey);
 			if (subDiff)
 			{
 				diff = diff || {};
@@ -6424,7 +6427,11 @@ function applyPatches(rootDomNode, oldVirtualNode, patches, eventNode)
 	}
 
 	addDomNodes(rootDomNode, oldVirtualNode, patches, eventNode);
+	return applyPatchesHelp(rootDomNode, patches);
+}
 
+function applyPatchesHelp(rootDomNode, patches)
+{
 	for (var i = 0; i < patches.length; i++)
 	{
 		var patch = patches[i];
@@ -6437,7 +6444,6 @@ function applyPatches(rootDomNode, oldVirtualNode, patches, eventNode)
 	}
 	return rootDomNode;
 }
-
 
 function applyPatch(domNode, patch)
 {
@@ -6453,6 +6459,9 @@ function applyPatch(domNode, patch)
 		case 'p-text':
 			domNode.replaceData(0, domNode.length, patch.data);
 			return domNode;
+
+		case 'p-thunk':
+			return applyPatchesHelp(domNode, patch.data);
 
 		case 'p-tagger':
 			domNode.elm_event_node_ref.tagger = patch.data;
