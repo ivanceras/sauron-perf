@@ -2,7 +2,7 @@ var numberOfItemsToAdd = 100;
 var Suites = [];
 
 Suites.push({
-    name: 'Backbone',
+    name: 'Backbone 1.1.2',
     url: 'todomvc/backbone/index.html',
     version: '1.1.2',
     prepare: function (runner, contentWindow, contentDocument) {
@@ -41,7 +41,7 @@ Suites.push({
 });
 
 Suites.push({
-    name: 'Ember',
+    name: 'Ember 1.4.0',
     url: 'todomvc/emberjs/index.html',
     version: '1.4.0 + Handlebars 1.3.0',
     prepare: function (runner, contentWindow, contentDocument) {
@@ -93,7 +93,7 @@ Suites.push({
 });
 
 Suites.push({
-    name: 'Angular',
+    name: 'Angular 1.5.3',
     url: 'todomvc/angularjs-perf/index.html',
     version: '1.5.3',
     prepare: function (runner, contentWindow, contentDocument) {
@@ -128,9 +128,9 @@ Suites.push({
 });
 
 Suites.push({
-    name: 'React',
+    name: 'React 15.0.2',
     url: 'todomvc/react/index.html',
-    version: '0.15.1',
+    version: '15.0.2',
     prepare: function (runner, contentWindow, contentDocument) {
         contentWindow.Utils.store = function () {}
         return runner.waitForElement('.new-todo').then(function (element) {
@@ -166,7 +166,7 @@ Suites.push({
 });
 
 Suites.push({
-    name: 'Om',
+    name: 'Om 0.5',
     url: 'todomvc/om/index.html',
     version: '0.5.0 + React 0.9.0',
     prepare: function (runner, contentWindow, contentDocument) {
@@ -278,7 +278,7 @@ Suites.push({
 });
 
 Suites.push({
-    name: 'Plait',
+    name: 'Plait 0.13',
     url: 'todomvc/plait/index.html',
     version: '0.13.0',
     prepare: function (runner, contentWindow, contentDocument) {
