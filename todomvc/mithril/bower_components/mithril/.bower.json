@@ -1,0 +1,14 @@
+{
+  "name": "mithril",
+  "homepage": "https://github.com/lhorie/mithril.js",
+  "version": "0.1.19",
+  "_release": "0.1.19",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.19",
+    "commit": "c8e0d917f7962a6a2e1b78ce191f74cf1478a4d3"
+  },
+  "_source": "git://github.com/lhorie/mithril.js.git",
+  "_target": "*",
+  "_originalSource": "git://github.com/lhorie/mithril.js.git"
+}
