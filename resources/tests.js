@@ -104,13 +104,14 @@ Suites.push({
     },
     tests: [
         new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            var submitEvent = document.createEvent('Event');
-            submitEvent.initEvent('submit', true, true);
             for (var i = 0; i < numberOfItemsToAdd; i++) {
                 var inputEvent = document.createEvent('Event');
                 inputEvent.initEvent('input', true, true);
                 newTodo.value = 'Something to do ' + i;
                 newTodo.dispatchEvent(inputEvent);
+                
+                var submitEvent = document.createEvent('Event');
+                submitEvent.initEvent('submit', true, true);
                 newTodo.form.dispatchEvent(submitEvent);
             }
         }),
@@ -280,9 +281,9 @@ Suites.push({
 Suites.push({
     name: 'Vue',
     url: 'todomvc/vue/index.html',
-    version: '0.10.0',
+    version: '1.0.24',
     prepare: function (runner, contentWindow, contentDocument) {
-        return runner.waitForElement('#new-todo').then(function (element) {
+        return runner.waitForElement('.new-todo').then(function (element) {
             element.focus();
             return element;
         });
