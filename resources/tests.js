@@ -330,7 +330,8 @@ Suites.push({
             var viewModel = contentWindow.viewModel;
             for (var i = 0; i < numberOfItemsToAdd; i++) {
                 var inputEvent = document.createEvent('Event');
-                inputEvent.initEvent('input', true, true);
+                inputEvent.initEvent('keyup', true, true);
+                inputEvent.keyCode = 13;
                 viewModel.current('Something to do ' + i);
                 newTodo.dispatchEvent(inputEvent);
 
@@ -373,7 +374,7 @@ Suites.push({
 
                 var keydownEvent = document.createEvent('Event');
                 keydownEvent.initEvent('keydown', true, true);
-                keydownEvent.keyCode = 13; // VK_ENTER
+                keydownEvent.keyCode = keydownEvent.which = 13; // VK_ENTER
                 newTodo.dispatchEvent(keydownEvent);
             }
         }),
@@ -409,7 +410,7 @@ Suites.push({
                 newTodo.dispatchEvent(inputEvent);
 
                 var keydownEvent = document.createEvent('Event');
-                keydownEvent.initEvent('keydown', true, true);
+                keydownEvent.initEvent('keypress', true, true);
                 keydownEvent.keyCode = 13; // VK_ENTER
                 newTodo.dispatchEvent(keydownEvent);
             }
@@ -447,7 +448,7 @@ Suites.push({
 
                 var keydownEvent = document.createEvent('Event');
                 keydownEvent.initEvent('keydown', true, true);
-                keydownEvent.keyCode = 13; // VK_ENTER
+                keydownEvent.keyCode = keydownEvent.which = 13; // VK_ENTER
                 newTodo.dispatchEvent(keydownEvent);
             }
         }),
