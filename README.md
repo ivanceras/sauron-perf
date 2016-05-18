@@ -1,16 +1,21 @@
 # TodoMVC Performance Comparison
 
-Plait, Mercury and Elm are based on the [virtual-dom][] project which appears to
-be extremely fast.
+![Sample results for Chrome 51 + OSX 10.11.4 on a Macbook Air](2016-05-18.png)
 
-[virtual-dom]: https://github.com/Matt-Esch/virtual-dom
+[RUN](https://rabbots.github.io/jspref)
 
-[**Run it yourself**][runner] to see how it works on your machine or in other
-browsers!
-
-Here are some sample results from running this in Chrome 35 with OSX 10.11.4 on
-a Macbook Air:
-
-[![Sample results for Chrome 51 + OSX 10.11.4 on a Macbook Air](sampleResults.png)][runner]
-
-[runner]: https://wildlyinaccurate.com/todomvc-perf-comparison/
+# Setup
+```
+npm run install
+```
+# Develop
+```
+npm run start
+```
+# TODO
+- [ ] Collect client info.
+- [ ] Average test.
+- [ ] Size comparison.
+- [ ] Add more framework.
+- [ ] DRY test.
+- [ ] Better UI/UX.

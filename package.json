@@ -1,0 +1,29 @@
+{
+  "name": "todomvc-perf-comparison",
+  "version": "0.0.1",
+  "description": "Speed FTW",
+  "main": "index.js",
+  "scripts": {
+    "start": "opener http://localhost:3000 && node_modules/http-server/bin/http-server -p 3000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rabbots/todomvc-perf-comparison.git"
+  },
+  "keywords": [
+    "pref",
+    "speed",
+    "todomvc"
+  ],
+  "author": "katopz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rabbots/todomvc-perf-comparison/issues"
+  },
+  "homepage": "https://github.com/rabbots/todomvc-perf-comparison#readme",
+  "devDependencies": {
+    "http-server": "^0.9.0",
+    "opener": "^1.4.1"
+  }
+}
