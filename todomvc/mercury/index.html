@@ -148,7 +148,7 @@ function render(state) {
     return h(".todomvc-wrapper", [
         h("link", {
             rel: "stylesheet",
-            href: "https://rawgithub.com/raynos/mercury/master/examples/todomvc/style.css"
+            href: "style.css"
         }),
         h("section#todoapp.todoapp", [
             mercury.partial(header, state.field, state.events),
