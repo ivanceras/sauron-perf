@@ -127,6 +127,7 @@ function startTest() {
             var analysis = document.getElementById("analysis");
             analysis.style.display = 'none';
             localStorage.clear();
+            runs = [];
             callNextStep(currentState);
         }));
 
