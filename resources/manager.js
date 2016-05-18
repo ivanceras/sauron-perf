@@ -30,7 +30,7 @@ function createUIForSuites(suites, onstep, onrun) {
         checkbox.id = suite.name;
         checkbox.type = 'checkbox';
         checkbox.checked = true;
-        checkbox.onchange = (function (suite, checkbox) { return function () { suite.disabled = !checkbox.checked; } })(suite, checkbox);
+        checkbox.onchange = (function (suite, checkbox) { return function () { suite.disabled = !checkbox.checked; runs = []; } })(suite, checkbox);
         checkbox.onchange();
         checkboxes.push(checkbox);
 
