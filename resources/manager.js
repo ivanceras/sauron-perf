@@ -68,12 +68,12 @@ function startTest() {
 
     var runner = new BenchmarkRunner(Suites, {
         willRunTest: function (suite, test) {
-            test.anchor.classList.add('running');
+            if (!navigator.userAgent.match("MSIE 9.0")) test.anchor.classList.add('running');
         },
         didRunTest: function (suite, test) {
             var classList = test.anchor.classList;
-            classList.remove('running');
-            classList.add('ran');
+            if (!navigator.userAgent.match("MSIE 9.0")) classList.remove('running');
+            if (!navigator.userAgent.match("MSIE 9.0")) classList.add('ran');
         },
         didRunSuites: function (measuredValues) {
             var results = '';
@@ -101,7 +101,8 @@ function startTest() {
             timesRan++
             if (timesRan >= timesToRun) {
                 timesRan = 0
-                reportAverage()
+                reportFastest()
+                shuffle(Suites);
             } else {
                 setTimeout(function () {
                     runButton.click()
@@ -125,15 +126,15 @@ function startTest() {
         function () {
             var analysis = document.getElementById("analysis");
             analysis.style.display = 'none';
+            localStorage.clear();
             callNextStep(currentState);
         }));
 
-    function reportAverage () {
+    function reportFastest () {
         var results = {}
         runs.forEach(function (runData) {
             for (var key in runData) {
-                results[key] = results[key] || 0
-                results[key] += runData[key].total
+                results[key] = Math.min(results[key] || Infinity, runData[key].total)
             }
         });
         drawChart(results);
@@ -142,11 +143,13 @@ function startTest() {
 
 google.load("visualization", "1", {packages:["corechart"]});
 function drawChart(results) {
-    var rawData = [ [ "Project" , "Time", { role: "style"} ] ];
+    var rawData = [];
     for (var key in results) {
-        var color = key === 'Plait' ? 'rgb(140, 217, 217)': 'rgb(140, 217, 140)';
-        rawData.push([ key, Math.round(results[key] / runs.length), color ]);
+        var color = colorify(key);
+        rawData.push([ key, Math.round(results[key]), color ]);
     }
+    rawData.sort(function(a, b){ return a[1] - b[1] })
+    rawData.unshift([ "Project" , "Time", { role: "style"} ])
     var data = google.visualization.arrayToDataTable(rawData);
 
     var view = new google.visualization.DataView(data);
@@ -158,7 +161,7 @@ function drawChart(results) {
                      2]);
 
     var runWord = "run" + (runs.length > 1 ? "s" : "");
-    var title = "Average time in milliseconds over " + runs.length +
+    var title = "Best time in milliseconds over " + runs.length +
         " " + runWord + " (lower is better)";
 
     var options = {
@@ -167,13 +170,34 @@ function drawChart(results) {
 	height: 400,
         legend: { position: "none" },
         backgroundColor: 'transparent',
-        hAxis: {title: title}
+        hAxis: {title: title},
+        min:0,
+        max:1500
     };
     var analysis = document.getElementById("analysis");
     analysis.style.display = 'block';
     var barchart = document.getElementById("barchart_values");
     var chart = new google.visualization.BarChart(barchart);
     chart.draw(view, options);
+}
+
+function shuffle ( ary ) {
+  var i = ary.length;
+  if ( i == 0 ) return false;
+  while ( --i ) {
+     var j = Math.floor( Math.random() * ( i + 1 ) );
+     var tempi = ary[i];
+     var tempj = ary[j];
+     ary[i] = tempj;
+     ary[j] = tempi;
+   }
+}
+
+function colorify(n){
+    var c = 'rgb(' + ( Math.max(0,(n.toLowerCase().charCodeAt(3 % n.length) - 97) / 26 * 255 | 0) ) + 
+              ", " + ( Math.max(0,(n.toLowerCase().charCodeAt(4 % n.length) - 97) / 26 * 255 | 0) ) +
+              ", " + ( Math.max(0,(n.toLowerCase().charCodeAt(5 % n.length) - 97) / 26 * 255 | 0) ) + ")"
+    return c
 }
 
 window.addEventListener('load', startTest);
