@@ -1,7 +1,0 @@
-{
-  "name": "todmvc-likelyjs",
-  "version": "0.0.1",
-  "dependencies": {
-    "todomvc-common": "~0.1.6"
-  }
-}
