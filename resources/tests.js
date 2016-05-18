@@ -293,13 +293,14 @@ Suites.push({
             for (var i = 0; i < numberOfItemsToAdd; i++) {
                 var inputEvent = document.createEvent('Event');
                 inputEvent.initEvent('input', true, true);
-                app.newTodo = 'Something to do ' + i;
+                // failed // app.newTodo = 'Something to do ' + i;
                 newTodo.dispatchEvent(inputEvent);
-
-                var keydownEvent = document.createEvent('Event');
-                keydownEvent.initEvent('keydown', true, true);
-                keydownEvent.keyCode = 13; // VK_ENTER
-                newTodo.dispatchEvent(keydownEvent);
+                
+                var keyupEvent = document.createEvent('Event');
+                keyupEvent.initEvent('keyup', true, true);
+                keyupEvent.keyCode = 13; // VK_ENTER
+                app.newTodo = 'Something to do ' + i;
+                newTodo.dispatchEvent(keyupEvent)
             }
         }),
         new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
