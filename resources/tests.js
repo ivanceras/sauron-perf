@@ -109,7 +109,7 @@ Suites.push({
                 inputEvent.initEvent('input', true, true);
                 newTodo.value = 'Something to do ' + i;
                 newTodo.dispatchEvent(inputEvent);
-                
+
                 var submitEvent = document.createEvent('Event');
                 submitEvent.initEvent('submit', true, true);
                 newTodo.form.dispatchEvent(submitEvent);
@@ -296,7 +296,7 @@ Suites.push({
                 inputEvent.initEvent('input', true, true);
                 // failed // app.newTodo = 'Something to do ' + i;
                 newTodo.dispatchEvent(inputEvent);
-                
+
                 var keyupEvent = document.createEvent('Event');
                 keyupEvent.initEvent('keyup', true, true);
                 keyupEvent.keyCode = 13; // VK_ENTER
@@ -433,7 +433,7 @@ Suites.push({
 Suites.push({
     name: 'Preact',
     url: 'todomvc/preact/index.html',
-    version: '4.1.1',
+    version: '5.1.0-beta.17',
     prepare: function (runner, contentWindow, contentDocument) {
         return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();

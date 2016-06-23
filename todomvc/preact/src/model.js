@@ -2,67 +2,64 @@ import { uuid, store } from './util';
 
 // note: commented out localStorage persistence as it mucks up tests.
 
-export default class TodoModel {
-	constructor(key) {
-		this.key = key;
-		// this.todos = store(key) || [];
-		this.todos = [];
-		this.onChanges = [];
+export default () => {
+	let onChanges = [];
+
+	function inform() {
+		for (let i=onChanges.length; i--; ) {
+			onChanges[i](model);
+		}
 	}
 
-	subscribe(fn) {
-		this.onChanges.push(fn);
-	}
+	let model = {
+		todos: [],
 
-	inform() {
-		for (let i=this.onChanges.length; i--; ) this.onChanges[i](this);
-		// if (!this.timer) this.queueSave();
-	}
+		onChanges: [],
 
-	// queueSave() {
-	// 	this.timer = setTimeout( () => {
-	// 		this.timer = null;
-	// 		store(this.key, this.todos);
-	// 	}, 500);
-	// }
+		subscribe(fn) {
+			onChanges.push(fn);
+		},
 
-	addTodo(title) {
-		this.todos = this.todos.concat({
-			id: uuid(),
-			title,
-			completed: false
-		});
-		this.inform();
-	}
+		addTodo(title) {
+			model.todos = model.todos.concat({
+				id: uuid(),
+				title,
+				completed: false
+			});
+			inform();
+		},
 
-	toggleAll(completed) {
-		this.todos = this.todos.map(
-			todo => ({ ...todo, completed })
-		);
-		this.inform();
-	}
+		toggleAll(completed) {
+			model.todos = model.todos.map(
+				todo => ({ ...todo, completed })
+			);
+			inform();
+		},
 
-	toggle(todoToToggle) {
-		this.todos = this.todos.map( todo => (
-			todo !== todoToToggle ? todo : ({ ...todo, completed: !todo.completed })
-		) );
-		this.inform();
-	}
+		toggle(todoToToggle) {
+			model.todos = model.todos.map( todo => (
+				todo !== todoToToggle ? todo : ({ ...todo, completed: !todo.completed })
+			) );
+			inform();
+		},
 
-	destroy(todo) {
-		this.todos = this.todos.filter( t => t !== todo );
-		this.inform();
-	}
+		destroy(todo) {
+			model.todos = model.todos.filter( t => t !== todo );
+			inform();
+		},
 
-	save(todoToSave, title) {
-		this.todos = this.todos.map( todo => (
-			todo !== todoToSave ? todo : ({ ...todo, title })
-		));
-		this.inform();
-	}
+		save(todoToSave, title) {
+			model.todos = model.todos.map( todo => (
+				todo !== todoToSave ? todo : ({ ...todo, title })
+			));
+			inform();
+		},
 
-	clearCompleted() {
-		this.todos = this.todos.filter( todo => !todo.completed );
-		this.inform();
-	}
-}
+		clearCompleted() {
+			model.todos = model.todos.filter( todo => !todo.completed );
+			inform();
+		}
+	};
+
+	return model;
+};

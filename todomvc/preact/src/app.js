@@ -1,11 +1,9 @@
 import { h, render, Component } from 'preact';
 import { Router } from 'preact-router';
-import bind from 'autobind-decorator';
-import TodoModel from './model';
+import createTodoModel from './model';
+import TodoHeader from './header';
 import TodoFooter from './footer';
 import TodoItem from './item';
-
-const ENTER_KEY = 13;
 
 const ALL_TODOS = 'all';
 const ACTIVE_TODOS = 'active';
@@ -17,65 +15,37 @@ const FILTERS = {
 	[COMPLETED_TODOS]: todo => todo.completed
 };
 
-@bind
 export default class App extends Component {
-	constructor() {
-		super();
-		this.model = new TodoModel('preact-perf-todos');
-		this.state = { todos: this.model.todos };
-		this.model.subscribe( ({ todos }) => this.setState({ todos }) );
-	}
+	model = createTodoModel();
 
-	getInitialState() {
-		return { nowShowing: ALL_TODOS };
-	}
+	state = {
+		todos: this.model.todos,
+		nowShowing: ALL_TODOS
+	};
 
-	handleRoute({ url }) {
+	handleRoute = ({ url }) => {
 		let nowShowing = url.replace(/\/$/,'').split('/').pop();
 		if (!FILTERS[nowShowing]) {
 			nowShowing = ALL_TODOS;
 		}
 		this.setState({ nowShowing });
-	}
+	};
 
-	handleNewTodoKeyDown(e) {
-		if (e.keyCode!==ENTER_KEY) return;
-		e.preventDefault();
-
-		let val = this.state.newTodo.trim();
-		if (val) {
-			this.model.addTodo(val);
-			this.setState({ newTodo: '' });
-		}
-	}
-
-	toggleAll(e) {
+	toggleAll = e => {
 		this.model.toggleAll(e.target.checked);
-	}
+	};
 
-	toggle(todo) {
-		this.model.toggle(todo);
-	}
-
-	destroy(todo) {
-		this.model.destroy(todo);
-	}
-
-	edit({ id }) {
-		this.setState({ editing: id });
-	}
-
-	save(todo, text) {
+	save = (todo, text) => {
 		this.model.save(todo, text);
-		this.setState({ editing: null });
-	}
+		this.reset();
+	};
 
-	cancel() {
+	reset = () => {
 		this.setState({ editing: null });
-	}
+	};
 
-	clearCompleted() {
-		this.model.clearCompleted();
+	componentWillMount() {
+		this.model.subscribe(this.linkState('todos', 'todos'));
 	}
 
 	render({ }, { nowShowing=ALL_TODOS, todos, newTodo, editing }) {
@@ -85,19 +55,11 @@ export default class App extends Component {
 
 		return (
 			<div>
-				<Router onChange={this.handleRoute}><Noop path="/" /></Router>
+				<Router onChange={this.handleRoute}>
+					<Noop path="/" />
+				</Router>
 
-				<header id="header">
-					<h1>todos</h1>
-					<input
-						id="new-todo"
-						placeholder="What needs to be done?"
-						value={newTodo}
-						onKeyDown={this.handleNewTodoKeyDown}
-						onInput={this.linkState('newTodo')}
-						autoFocus={true}
-					/>
-				</header>
+				<TodoHeader addTodo={this.model.addTodo} />
 
 				{ todos.length ? (
 					<section id="main">
@@ -112,12 +74,12 @@ export default class App extends Component {
 								<TodoItem
 									key={todo.id}
 									todo={todo}
-									onToggle={this.toggle}
-									onDestroy={this.destroy}
-									onEdit={this.edit}
+									onToggle={this.model.toggle}
+									onDestroy={this.model.destroy}
 									editing={editing === todo.id}
+									onEdit={this.linkState('editing', 'id')}
 									onSave={this.save}
-									onCancel={this.cancel}
+									onCancel={this.reset}
 								/>
 							)) }
 						</ul>
@@ -129,7 +91,7 @@ export default class App extends Component {
 						count={activeTodoCount}
 						completedCount={completedCount}
 						nowShowing={nowShowing}
-						onClearCompleted={this.clearCompleted}
+						onClearCompleted={this.model.clearCompleted}
 					/>
 				) : null }
 			</div>
@@ -139,8 +101,4 @@ export default class App extends Component {
 
 
 // just a fake component we can feed to router. yay.
-class Noop extends Component {
-	render() {
-		return null;
-	}
-}
+const Noop = () => null;
