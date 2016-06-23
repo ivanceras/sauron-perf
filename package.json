@@ -4,7 +4,8 @@
   "description": "Speed FTW",
   "main": "index.js",
   "scripts": {
-    "start": "opener http://localhost:3000 && node_modules/http-server/bin/http-server -p 3000",
+    "start": "opener http://localhost:3000 && http-server -p 3000",
+    "deploy": "gh-pages -d .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,6 +24,7 @@
   },
   "homepage": "https://github.com/rabbots/todomvc-perf-comparison#readme",
   "devDependencies": {
+    "gh-pages": "^0.11.0",
     "http-server": "^0.9.0",
     "opener": "^1.4.1"
   }
