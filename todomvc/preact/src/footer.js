@@ -1,5 +1,4 @@
 import { h, Component } from 'preact';
-import { Link } from 'preact-router';
 import { pluralize } from './util';
 
 const ALL_TODOS = 'all';
@@ -13,15 +12,15 @@ export default ({ nowShowing, count, completedCount, onClearCompleted }) => (
 		</span>
 		<ul id="filters">
 			<li>
-				<Link href="/" class={{ selected: nowShowing===ALL_TODOS }}>All</Link>
+				<a href="/" class={{ selected: nowShowing===ALL_TODOS }}>All</a>
 			</li>
 			&nbsp;
 			<li>
-				<Link href="/active" class={{ selected: nowShowing===ACTIVE_TODOS }}>Active</Link>
+				<a href="/active" class={{ selected: nowShowing===ACTIVE_TODOS }}>Active</a>
 			</li>
 			&nbsp;
 			<li>
-				<Link href="/completed" class={{ selected: nowShowing===COMPLETED_TODOS }}>Completed</Link>
+				<a href="/completed" class={{ selected: nowShowing===COMPLETED_TODOS }}>Completed</a>
 			</li>
 		</ul>
 		{ completedCount > 0 ? (

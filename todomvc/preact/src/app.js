@@ -1,5 +1,5 @@
-import { h, render, Component } from 'preact';
-import { Router } from 'preact-router';
+import { h, Component } from 'preact';
+import Router from 'preact-router';
 import createTodoModel from './model';
 import TodoHeader from './header';
 import TodoFooter from './footer';
