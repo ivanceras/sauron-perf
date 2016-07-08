@@ -1,9 +1,11 @@
 # TodoMVC Performance Benchmark
 
-[![Sample results for Chrome 51 + OSX 10.11.4 on a Macbook Air](img/2016-06-25.png)](https://rabbots.github.io/todomvc-perf)
+<img src="img/2016-07-08.png" width="504">
+
+_(Results for Chrome 51 + OSX 10.10.5 on a Macbook Pro)_
 
 # Try
-https://rabbots.github.io/todomvc-perf
+https://developit.github.io/preact-perf
 
 # Setup
 ```
