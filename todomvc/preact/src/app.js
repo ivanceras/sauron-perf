@@ -1,4 +1,5 @@
 import { h, Component } from 'preact';
+import linkState from 'linkstate';
 import Router from 'preact-router';
 import createTodoModel from './model';
 import TodoHeader from './header';
@@ -45,7 +46,9 @@ export default class App extends Component {
 	};
 
 	componentWillMount() {
-		this.model.subscribe(this.linkState('todos', 'todos'));
+		this.model.subscribe( state => {
+			this.setState({ todos: state.todos });
+		});
 	}
 
 	render({ }, { nowShowing=ALL_TODOS, todos, newTodo, editing }) {
@@ -77,7 +80,7 @@ export default class App extends Component {
 									onToggle={this.model.toggle}
 									onDestroy={this.model.destroy}
 									editing={editing === todo.id}
-									onEdit={this.linkState('editing', 'id')}
+									onEdit={linkState(this, 'editing', 'id')}
 									onSave={this.save}
 									onCancel={this.reset}
 								/>

@@ -1,4 +1,5 @@
 import { h, Component } from 'preact';
+import linkState from 'linkstate';
 
 const ENTER_KEY = 13;
 
@@ -23,7 +24,7 @@ export default class TodoHeader extends Component {
 					placeholder="What needs to be done?"
 					value={text}
 					onKeyDown={this.handleKey}
-					onInput={this.linkState('text')}
+					onInput={linkState(this, 'text')}
 					autoFocus
 				/>
 			</header>

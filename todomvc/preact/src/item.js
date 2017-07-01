@@ -1,4 +1,5 @@
 import { h, Component } from 'preact';
+import linkState from 'linkstate';
 
 const ESCAPE_KEY = 27;
 const ENTER_KEY = 13;
@@ -72,7 +73,7 @@ export default class TodoItem extends Component {
 						class="edit"
 						value={editing && editText || title}
 						onBlur={this.handleSubmit}
-						onChange={this.linkState('editText')}
+						onChange={linkState(this, 'editText')}
 						onKeyDown={this.handleKeyDown}
 					/>
 				) }

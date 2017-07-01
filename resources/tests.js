@@ -433,7 +433,7 @@ Suites.push({
 Suites.push({
     name: 'Preact',
     url: 'todomvc/preact/index.html',
-    version: '5.1.0-beta.26',
+    version: '8.1.0',
     prepare: function (runner, contentWindow, contentDocument) {
         return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
