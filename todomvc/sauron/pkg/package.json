@@ -1,0 +1,15 @@
+{
+  "name": "todomvc",
+  "collaborators": [
+    "Jovansonlee Cesar <ivanceras@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "license": "MIT",
+  "files": [
+    "todomvc_bg.wasm",
+    "todomvc.js",
+    "todomvc.d.ts"
+  ],
+  "browser": "todomvc.js",
+  "types": "todomvc.d.ts"
+}
