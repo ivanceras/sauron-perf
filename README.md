@@ -1,11 +1,12 @@
-# TodoMVC Performance Benchmark
+# TodoMVC Performance Benchmark for Mogwai
 
-<img src="img/2016-07-08.png" width="504">
+[mogwai](https://github.com/schell/mogwai) is snappy!
 
-_(Results for Chrome 51 + OSX 10.10.5 on a Macbook Pro)_
+<img src="img/2019-12-03.png" width="504">
 
-# Try
-https://developit.github.io/preact-perf
+_Results for Firefox 70.0.1 (64-bit)_
+
+[Try running the benchmark in your browser](https://schell.github.io/mogwai/todomvc/perf)
 
 # Setup
 ```
