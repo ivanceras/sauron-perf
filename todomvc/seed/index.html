@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" data-framework="rust">
+  <head>
+    <meta charset="utf-8" />
+    <title>Seed • TodoMVC</title>
+    <link rel="stylesheet" href="index.css" />
+
+    <!-- Because of Edge, see https://github.com/samthor/fast-text-encoding -->
+    <script type="text/javascript" src="text-polyfill.min.js"></script>
+  </head>
+  <body>
+    <section id="app" class="todoapp"></section>
+
+    <footer class="info">
+      <p>Double-click to edit a todo</p>
+      <p>
+        Created by <a href="http://github.com/David-OConnor/">David O'Connor</a>
+      </p>
+      <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+    </footer>
+
+    <script type="module">
+      // https://rustwasm.github.io/docs/wasm-bindgen/examples/without-a-bundler.html
+      import init from './pkg/package.js';
+      init('./pkg/package_bg.wasm');
+    </script>
+  </body>
+</html>

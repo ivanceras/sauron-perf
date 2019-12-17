@@ -1,0 +1,14 @@
+{
+  "name": "mogwai-todo",
+  "collaborators": [
+    "Schell Scivally <efsubenovex@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "mogwai_todo_bg.wasm",
+    "mogwai_todo.js",
+    "mogwai_todo.d.ts"
+  ],
+  "browser": "mogwai_todo.js",
+  "types": "mogwai_todo.d.ts"
+}

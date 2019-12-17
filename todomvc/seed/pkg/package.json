@@ -1,0 +1,15 @@
+{
+  "name": "todomvc",
+  "collaborators": [
+    "Your Name <email@address.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "package_bg.wasm",
+    "package.js",
+    "package.d.ts"
+  ],
+  "module": "package.js",
+  "types": "package.d.ts",
+  "sideEffects": "false"
+}
