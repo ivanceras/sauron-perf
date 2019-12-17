@@ -7,3 +7,14 @@ Rust webframeworks:
 - [yew](https://github.com/yewstack/yew)
 
  ![](https://raw.githubusercontent.com/ivanceras/sauron-perf/master/img/2019-12-17.png)
+
+
+## Setup:
+```
+cargo install basic-http-server
+git clone https://github.com/ivanceras/sauron-perf
+cd sauron-perf
+basic-http-server
+```
+
+Open [http://localhost:4000](http://localhost:4000)
