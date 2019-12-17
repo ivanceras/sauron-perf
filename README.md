@@ -8,6 +8,7 @@ Rust webframeworks:
 
  ![](https://raw.githubusercontent.com/ivanceras/sauron-perf/master/img/2019-12-17.png)
 
+ ** [Run benchmark](https://ivanceras.github.io/sauron-perf/) **
 
 ## Setup:
 ```
