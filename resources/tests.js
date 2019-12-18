@@ -209,6 +209,8 @@ Suites.push({
     },
     tests: [
         new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+            console.log(contentWindow);
+            console.log(contentWindow.app);
             for (var i = 0; i < numberOfItemsToAdd; i++) {
                 var inputEvent = document.createEvent('Event');
                 inputEvent.initEvent('input', true, true);
@@ -246,6 +248,7 @@ Suites.push({
     },
     tests: [
         new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+            console.log(contentWindow);
             var app = contentWindow.app;
             for (var i = 0; i < numberOfItemsToAdd; i++) {
                 var inputEvent = document.createEvent('Event');
@@ -273,7 +276,44 @@ Suites.push({
     ]
 });
 
+Suites.push({
+    name: 'Svelte',
+    url: 'todomvc/svelte/public/index.html',
+    version: '3.16.5',
+    prepare: function (runner, contentWindow, contentDocument) {
+        return runner.waitForElement('.new-todo').then(function (element) {
+            element.focus();
+            return element;
+        });
+    },
+    tests: [
+        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+            var app = contentWindow;
+            for (var i = 0; i < numberOfItemsToAdd; i++) {
+                var inputEvent = document.createEvent('Event');
+                inputEvent.initEvent('input', true, true);
+                // failed // app.newTodo = 'Something to do ' + i;
+                newTodo.dispatchEvent(inputEvent);
 
+                var keyupEvent = document.createEvent('Event');
+                keyupEvent.initEvent('keyup', true, true);
+                keyupEvent.keyCode = 13; // VK_ENTER
+                app.newTodo = 'Something to do ' + i;
+                newTodo.dispatchEvent(keyupEvent)
+            }
+        }),
+        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var checkboxes = contentDocument.querySelectorAll('.toggle');
+            for (var i = 0; i < checkboxes.length; i++)
+                checkboxes[i].click();
+        }),
+        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var deleteButtons = contentDocument.querySelectorAll('.destroy');
+            for (var i = 0; i < deleteButtons.length; i++)
+                deleteButtons[i].click();
+        })
+    ]
+});
 
 Suites.push({
     name: 'Mithril',
