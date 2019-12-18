@@ -6,7 +6,7 @@ Rust webframeworks:
 - [seed](https://github.com/seed-rs/seed)
 - [yew](https://github.com/yewstack/yew)
 
- ![](https://raw.githubusercontent.com/ivanceras/sauron-perf/master/img/2019-12-17.png)
+ ![](https://raw.githubusercontent.com/sachinbhutani/sauron-perf/master/Screen%20Shot%202019-12-17%20at%209.10.44%20PM.png)
 
  **[Run benchmark](https://ivanceras.github.io/sauron-perf/)**
 
